@@ -31,6 +31,8 @@ local ui_button = ui.button
 local string_format = string.format
 local UIOperations_newLine = UIOperations.newLine
 local UIOperations_renderButton = UIOperations.renderButton
+local UIOperations_renderSlider = UIOperations.renderSlider
+local UIOperations_renderCheckbox = UIOperations.renderCheckbox
 
 
 local UI_HEADER_TEXT_FONT_SIZE = 15
@@ -138,7 +140,52 @@ local StorageManager__options_max = StorageManager.options_max
 ---
 ---@param optionType StorageManager.Options
 local renderOptionSlider = function(optionType, currentValue)
-    return UIOperations.renderSlider(StorageManager__options_label[optionType], StorageManager__options_tooltip[optionType], currentValue, StorageManager__options_min[optionType], StorageManager__options_max[optionType], DEFAULT_SLIDER_WIDTH, DEFAULT_SLIDER_FORMAT, StorageManager__options_default[optionType])
+    return UIOperations_renderSlider(StorageManager__options_label[optionType], StorageManager__options_tooltip[optionType], currentValue, StorageManager__options_min[optionType], StorageManager__options_max[optionType], DEFAULT_SLIDER_WIDTH, DEFAULT_SLIDER_FORMAT, StorageManager__options_default[optionType])
+end
+
+local setPositionButtonColors = {
+    normal = rgbm(0.00, 0.352, 0.258, 1.0),
+    hovered = rgbm(0.00, 0.433, 0.316, 1.0),
+    active = rgbm(0.08, 0.55, 0.16, 1.0),
+    text = rgbm(1.0, 1.0, 1.0, 1.0),
+    waitingForClick_normal = rgbm(1.0, 0.843, 0.0, 1.0),
+    waitingForClick_hovered = rgbm(1.0, 0.925, 0.235, 1.0),
+    waitingForClick_active = rgbm(1.0, 0.980, 0.513, 1.0),
+    waitingForClick_text = rgbm(0.0, 0.0, 0.0, 1.0),
+}
+
+local renderPositionSection = function(particleEffectInstance)
+        -- Show the position value label
+        ui.alignTextToFramePadding() -- called to align text properly with the button
+        ui_text(string_format('Position: (%.2f, %.2f, %.2f)', particleEffectInstance.position.x, particleEffectInstance.position.y, particleEffectInstance.position.z))
+
+        ui_sameLine()
+
+        local buttonNormalColor = setPositionButtonColors.normal
+        local buttonHoveredColor = setPositionButtonColors.hovered
+        local buttonActiveColor = setPositionButtonColors.active
+        local buttonTextColor = setPositionButtonColors.text
+
+        if particleEffectInstance.waitingForClickToSetPosition then
+            buttonNormalColor = setPositionButtonColors.waitingForClick_normal
+            buttonHoveredColor = setPositionButtonColors.waitingForClick_hovered
+            buttonActiveColor = setPositionButtonColors.waitingForClick_active
+            buttonTextColor = setPositionButtonColors.waitingForClick_text
+        end
+
+        if UIOperations.renderColorButton(
+            buttonNormalColor, buttonHoveredColor, buttonActiveColor, buttonTextColor,
+            function()
+                local buttonText = particleEffectInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
+                return UIOperations_renderButton(
+                    buttonText, 
+                    'Set the particle effect position by clicking on the track.'
+                )
+            end
+        ) then
+            particleEffectInstance.waitingForClickToSetPosition  = true
+        end
+
 end
 
 local renderFlamesSection = function()
@@ -148,24 +195,13 @@ local renderFlamesSection = function()
     UIOperations_newLine(1)
     
     -- Enabled
-    flameInstance.enabled = UIOperations.renderCheckbox(StorageManager__options_label[StorageManager.Options.Flame_Enabled], StorageManager__options_tooltip[StorageManager.Options.Flame_Enabled], flameInstance.enabled, StorageManager__options_default[StorageManager.Options.Flame_Enabled])
+    flameInstance.enabled = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Flame_Enabled], StorageManager__options_tooltip[StorageManager.Options.Flame_Enabled], flameInstance.enabled, StorageManager__options_default[StorageManager.Options.Flame_Enabled])
 
     UIOperations_newLine(1)
 
     UIOperations.createDisabledSection(not flameInstance.enabled, function()
-        -- Show the position value label
-        ui.alignTextToFramePadding() -- called to align text properly with the button
-        ui_text(string_format('Position: (%.2f, %.2f, %.2f)', flameInstance.position.x, flameInstance.position.y, flameInstance.position.z))
-
-        ui_sameLine()
-
-        local buttonText = flameInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
-        if ui_button(buttonText) then
-            flameInstance.waitingForClickToSetPosition  = true
-        end
+        renderPositionSection(flameInstance)
         
-        --UIOperations_newLine()
-
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset])
         flameInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset])
@@ -217,21 +253,12 @@ local renderSparksSection = function()
     UIOperations_newLine(1)
     
     -- Enabled
-    sparksInstance.enabled = UIOperations.renderCheckbox(StorageManager__options_label[StorageManager.Options.Sparks_Enabled], StorageManager__options_tooltip[StorageManager.Options.Sparks_Enabled], sparksInstance.enabled, StorageManager__options_default[StorageManager.Options.Sparks_Enabled])
+    sparksInstance.enabled = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Sparks_Enabled], StorageManager__options_tooltip[StorageManager.Options.Sparks_Enabled], sparksInstance.enabled, StorageManager__options_default[StorageManager.Options.Sparks_Enabled])
     
     UIOperations_newLine(1)
     
     UIOperations.createDisabledSection(not sparksInstance.enabled, function()
-        -- Show the position value label
-        ui.alignTextToFramePadding() -- called to align text properly with the button
-        ui_text(string_format('Position: (%.2f, %.2f, %.2f)', sparksInstance.position.x, sparksInstance.position.y, sparksInstance.position.z))
-        
-        ui_sameLine()
-        
-        local buttonText = sparksInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
-        if ui_button(buttonText) then
-            sparksInstance.waitingForClickToSetPosition = true
-        end
+        renderPositionSection(sparksInstance)
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset])
@@ -286,21 +313,12 @@ local renderSmokeSection = function()
     UIOperations_newLine(1)
     
     -- Enabled
-    smokeInstance.enabled = UIOperations.renderCheckbox(StorageManager__options_label[StorageManager.Options.Smoke_Enabled], StorageManager__options_tooltip[StorageManager.Options.Smoke_Enabled], smokeInstance.enabled, StorageManager__options_default[StorageManager.Options.Smoke_Enabled])
+    smokeInstance.enabled = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Smoke_Enabled], StorageManager__options_tooltip[StorageManager.Options.Smoke_Enabled], smokeInstance.enabled, StorageManager__options_default[StorageManager.Options.Smoke_Enabled])
     
     UIOperations_newLine(1)
 
     UIOperations.createDisabledSection(not smokeInstance.enabled, function()
-        -- Show the position value label
-        ui.alignTextToFramePadding() -- called to align text properly with the button
-        ui_text(string_format('Position: (%.2f, %.2f, %.2f)', smokeInstance.position.x, smokeInstance.position.y, smokeInstance.position.z))
-        
-        ui_sameLine()
-        
-        local buttonText = smokeInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
-        if ui_button(buttonText) then
-            smokeInstance.waitingForClickToSetPosition = true
-        end
+        renderPositionSection(smokeInstance)
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset])
@@ -326,8 +344,8 @@ local renderSmokeSection = function()
         smoke.targetYVelocity = renderOptionSlider(StorageManager.Options.Smoke_TargetYVelocity, smoke.targetYVelocity)
         UIOperations_newLine(1)
         
-        smokeInstance.disableCollisions = UIOperations.renderCheckbox(StorageManager__options_label[StorageManager.Options.Smoke_DisableCollisions], StorageManager__options_tooltip[StorageManager.Options.Smoke_DisableCollisions], smokeInstance.disableCollisions, StorageManager__options_default[StorageManager.Options.Smoke_DisableCollisions])
-        smokeInstance.fadeIn = UIOperations.renderCheckbox(StorageManager__options_label[StorageManager.Options.Smoke_FadeIn], StorageManager__options_tooltip[StorageManager.Options.Smoke_FadeIn], smokeInstance.fadeIn, StorageManager__options_default[StorageManager.Options.Smoke_FadeIn])
+        smokeInstance.disableCollisions = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Smoke_DisableCollisions], StorageManager__options_tooltip[StorageManager.Options.Smoke_DisableCollisions], smokeInstance.disableCollisions, StorageManager__options_default[StorageManager.Options.Smoke_DisableCollisions])
+        smokeInstance.fadeIn = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Smoke_FadeIn], StorageManager__options_tooltip[StorageManager.Options.Smoke_FadeIn], smokeInstance.fadeIn, StorageManager__options_default[StorageManager.Options.Smoke_FadeIn])
 
         local flags = 0
         if smokeInstance.disableCollisions then
@@ -507,7 +525,6 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
         ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
     end
 
-    UIOperations_newLine(1)
 
     ui.separator()
 
@@ -600,6 +617,13 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     -- finish the export_sections table
     ui_columns(1, false)
+
+    UIOperations_newLine(2)
+
+    -- ui.textColored('Note: Internally, the CSP lua API is independent from the way ext_config.ini is handled.  This means that you might not always get the exact same results when the particle effects are saved to the ext_config.ini file.', rgbm(1, 1, 0, 1))
+    ui.textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
+    ui.textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
+    UIOperations_newLine(1)
 end
 
 --[====[

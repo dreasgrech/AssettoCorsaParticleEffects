@@ -41,6 +41,7 @@ UIOperations.renderColorPicker = function(label, tooltip, color, flags, size)
     return color
 end
 
+
 -- UIOperations.renderButton = function(label, tooltip, width, height)
 UIOperations.renderButton = function(label, tooltip, rightClickCallback)
     -- ui_pushItemWidth(width)
@@ -60,6 +61,39 @@ UIOperations.renderButton = function(label, tooltip, rightClickCallback)
     end
 
     return clicked
+end
+
+---Used to render a button with custom colors.
+---This function is meant to be called with a callback that renders the button itself.
+--- 
+---Example:
+-- if UIOperations.renderColorButton(
+--      normalColor, hoveredColor, activeColor, textColor,
+--      function()
+--          return UIOperations.renderButton(buttonText, toolTipText)
+--      end
+-- ) 
+-- then
+--      -- Button was clicked
+-- end
+---@param backColor rgbm @Background color of the button.
+---@param backHoveredColor rgbm @Background color of the button when hovered.
+---@param backActiveColor rgbm @Background color of the button when active (pressed).
+---@param textColor rgbm @Text color of the button.
+---@param renderButtonCallback function @A callback function which should render the button and return whether it was clicked.
+---@return boolean @Whether the button was clicked.
+UIOperations.renderColorButton = function(backColor, backHoveredColor, backActiveColor, textColor, renderButtonCallback)
+  ui.pushStyleColor(ui.StyleColor.Button, backColor)
+  ui.pushStyleColor(ui.StyleColor.ButtonHovered, backHoveredColor)
+  ui.pushStyleColor(ui.StyleColor.ButtonActive, backActiveColor)
+  ui.pushStyleColor(ui.StyleColor.Text, textColor)
+
+  -- render the button
+  local buttonResult = renderButtonCallback()
+
+  ui.popStyleColor(4) -- 4 styles
+
+  return buttonResult
 end
 
 local emptyVec3 = vec3(0, 0, 0)

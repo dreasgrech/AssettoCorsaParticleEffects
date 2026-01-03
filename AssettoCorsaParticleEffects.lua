@@ -666,7 +666,13 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     -- ui_textColored('Note: Internally, the CSP lua API is independent from the way ext_config.ini is handled.  This means that you might not always get the exact same results when the particle effects are saved to the ext_config.ini file.', rgbm(1, 1, 0, 1))
     ui_textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
     ui_textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
-    UIOperations_newLine(1)
+    --UIOperations_newLine(1)
+
+    --[===[
+    -- Andreas: use this to determine the window size to be set in the manifest.ini file
+    local winSize = ui.windowSize()
+    ac.log(string_format('Particle Effects window size: (%.2f, %.2f)', winSize.x, winSize.y))
+    --]===]
 end
 
 --[====[

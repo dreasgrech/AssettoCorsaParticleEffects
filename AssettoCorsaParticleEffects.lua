@@ -419,7 +419,7 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
     if UIOperations_renderButton(
         'Save to global track config', 
         string_format(
-            'Save to the track main config file which is applied for all layouts.\n\n%s', 
+            'Save to the track main config file which is applied for all layouts of this track.\n\n%s', 
             ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
         )
     ) then
@@ -427,26 +427,6 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         ac.setMessage('Saved', string_format('Particle effect saved to global track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)), nil, 5.0)
     end
 
-    --[===[
-    ui_sameLine()
-
-    if UIOperations_renderButton(
-        'Open global track config', 
-        string_format(
-            'Open the track main config file which is applied for all layouts.\n\nRight click to show the file in its directory instead.\n\n%s', 
-            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
-        ),
-        function() 
-            -- show the file in its directory in explorer
-            ExtConfigFileHandler.showExtConfigFileInExplorer(ExtConfigFileHandler.ExtConfigFileTypes.Track)
-        end
-    ) then
-        -- open the file directly
-        ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.Track)
-    end
-    --]===]
-
-    -- UIOperations_newLine(1)
     ui_sameLine()
 
     if UIOperations_renderButton(
@@ -459,25 +439,20 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         ParticleEffectsExtConfigFileHandler.writeToExtConfig(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout, particleEffectsType, particleEffectInstance)
         ac.setMessage('Saved', string_format('Particle effect saved to track layout config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)), nil, 5.0)
     end
+end
 
-    --[===[
-    ui_sameLine()
+local openGlobalTrackConfigButtonToolTipText = string_format(
+    'Open the track main config file which is applied for all layouts of this track.\n\nRight click to show the file in its directory instead.\n\n%s', 
+    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
+)
 
-    if UIOperations_renderButton(
-        'Open track layout config', 
-        string_format(
-            'Open the track layout config file which is applied for only this layout.\n\nRight click to show the file in its directory instead.\n\n%s', 
-            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
-        ),
-        function() 
-            -- show the file in its directory in explorer
-            ExtConfigFileHandler.showExtConfigFileInExplorer(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
-        end
-    ) then
-        -- open the file directly
-        ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
-    end
-    --]===]
+local openTrackLayoutConfigButtonTooltipText = string_format(
+    'Open the track layout config file which is applied for only this layout.\n\nRight click to show the file in its directory instead.\n\n%s', 
+    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
+)
+
+if ExtConfigFileHandler.isTrackLayoutFileSameAsTrackFile() then
+    openTrackLayoutConfigButtonTooltipText = openTrackLayoutConfigButtonTooltipText .. '\n\n\n(Note: This track only has one layout, so the global track config is used.)'
 end
 
 -- Function defined in manifest.ini
@@ -498,10 +473,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     if UIOperations_renderButton(
         'Open global track config', 
-        string_format(
-            'Open the track main config file which is applied for all layouts.\n\nRight click to show the file in its directory instead.\n\n%s', 
-            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
-        ),
+        openGlobalTrackConfigButtonToolTipText,
         function() 
             -- show the file in its directory in explorer
             ExtConfigFileHandler.showExtConfigFileInExplorer(ExtConfigFileHandler.ExtConfigFileTypes.Track)
@@ -515,10 +487,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     if UIOperations_renderButton(
         'Open track layout config', 
-        string_format(
-            'Open the track layout config file which is applied for only this layout.\n\nRight click to show the file in its directory instead.\n\n%s', 
-            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
-        ),
+        openTrackLayoutConfigButtonTooltipText,
         function() 
             -- show the file in its directory in explorer
             ExtConfigFileHandler.showExtConfigFileInExplorer(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)

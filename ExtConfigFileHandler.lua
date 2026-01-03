@@ -7,6 +7,10 @@ ExtConfigFileHandler.ExtConfigFileTypes ={
     Track = 1,
     -- E:\Games\Steam\steamapps\common\assettocorsa\content\tracks\ks_nordschleife\touristenfahrten\extension\ext_config.ini
     TrackLayout = 2,
+    --[====[
+    -- E:\Games\Steam\steamapps\common\assettocorsa\extension\config\tracks\loaded\ks_nordschleife.ini
+    TrackLoaded = 3
+    --]====]
 }
 
 -- ExtConfigFileHandler.EXTENSION_PATH = '/extension/'
@@ -38,6 +42,14 @@ local availableFiles = {
     -- E:\Games\Steam\steamapps\common\assettocorsa\content\tracks\ks_nordschleife\touristenfahrten\extension\ext_config.ini
     [ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout] = string.format('%s%s', availableDirectories[ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout], ExtConfigFileHandler.EXT_CONFIG_RELATIVE_PATH),
 }
+
+-- Check if the track layout ext_config.ini file is the same as the track ext_config.ini file
+-- This happens when the track only has a single layout and the layout folder is the same as the track folder
+local isTrackLayoutFileSameAsTrackFile = availableFiles[ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout] == availableFiles[ExtConfigFileHandler.ExtConfigFileTypes.Track]
+
+ExtConfigFileHandler.isTrackLayoutFileSameAsTrackFile = function ()
+    return isTrackLayoutFileSameAsTrackFile
+end
 
 ---Returns the file path for the specified ext_config.ini file type
 ---@param extConfigFileType ExtConfigFileHandler.ExtConfigFileTypes
@@ -82,11 +94,7 @@ ExtConfigFileHandler.writeNewSectionToExtConfigFile = function (extConfigFileTyp
     end
 
     local nextSectionNameIndex = largestSectionNameIndex + 1
-    -- ac.log('Next FLAME section name index: ' .. tostring(nextSectionNameIndex))
-    -- local nextSectionName = string.format('FLAME_%d', nextSectionNameIndex)
-    local fullNextSectionName = string.format('%s_%d', sectionName, nextSectionNameIndex)
-    -- ac.log('Next FLAME section name: ' .. tostring(nextSectionName))
-    -- ac.log(string.format('Next %s section name: %s', sectionName, fullNextSectionName))
+    local fullNextSectionName = string.format('%s_%d', sectionName, nextSectionNameIndex) -- e.g., "FLAME_2"
 
     setCallback(file, fullNextSectionName)
 

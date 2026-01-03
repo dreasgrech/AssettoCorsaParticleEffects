@@ -100,10 +100,12 @@ ParticleEffectsExtConfigFileHandler.writeToExtConfig = function(extConfigFileTyp
         function (file, fullSectionName)
             local effect = effectInstance.effect
             local position = effectInstance.position
+            local positionOffset = effectInstance.positionOffset
             local velocity = effectInstance.velocity
             local amount = effectInstance.amount
 
-            writers[particleEffectsType](file, fullSectionName, effect, position, velocity, amount)
+            local finalPosition = position + positionOffset
+            writers[particleEffectsType](file, fullSectionName, effect, finalPosition, velocity, amount)
         end
     )
 end

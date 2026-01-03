@@ -14,6 +14,7 @@ ExtConfigDefinitions = require('ExtConfigDefinitions')
 ExtConfigCodeGenerator = require('ExtConfigCodeGenerator')
 ExtConfigFileHandler = require('ExtConfigFileHandler')
 ParticleEffectsExtConfigFileHandler = require("ParticleEffectsExtConfigFileHandler")
+LuaParticleEffectsCodeGenerator = require("LuaParticleEffectsCodeGenerator")
 
 -- local bindings
 local bit = bit
@@ -443,7 +444,7 @@ end
 
 local COLUMNS_WIDTH = 370
 
-local renderExtConfigFormatSection = function(extConfigFormat)
+local renderCodeSection = function(extConfigFormat)
     ui_text(extConfigFormat)
 
     if ui_itemHovered() then
@@ -515,7 +516,39 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
     end
 end
 
-local renderExtConfigCodeTable = function()
+local renderLuaCodeSectionTables = function()
+    ui_columns(3, true, "lua_code_sections")
+    ui_setColumnWidth(0, COLUMNS_WIDTH)
+    ui_setColumnWidth(1, COLUMNS_WIDTH)
+    ui_setColumnWidth(2, COLUMNS_WIDTH)
+
+    -- Flames ext_config.ini section
+    UIOperations_createDisabledSection(not flameInstance.enabled, function()
+        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        renderCodeSection(luaCode)
+    end)
+
+    ui_nextColumn()
+
+    -- Sparks ext_config.ini section
+    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
+        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        renderCodeSection(luaCode)
+    end)
+
+    ui_nextColumn()
+
+    -- Smoke ext_config.ini section
+    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
+        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        renderCodeSection(luaCode)
+    end)
+
+    -- finish the lua_code_sections table
+    ui_columns(1, false)
+end
+
+local renderExtConfigCodeTables = function()
     -- The table for the ext_config.ini code sections
     ui_columns(3, true, "ext_config_sections")
     ui_setColumnWidth(0, COLUMNS_WIDTH)
@@ -525,7 +558,7 @@ local renderExtConfigCodeTable = function()
     -- Flames ext_config.ini section
     UIOperations_createDisabledSection(not flameInstance.enabled, function()
         local flameExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
-        renderExtConfigFormatSection(flameExtConfigFormat)
+        renderCodeSection(flameExtConfigFormat)
     end)
     
     ui_nextColumn()
@@ -533,7 +566,7 @@ local renderExtConfigCodeTable = function()
     -- Sparks ext_config.ini section
     UIOperations_createDisabledSection(not sparksInstance.enabled, function()
         local sparksExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
-        renderExtConfigFormatSection(sparksExtConfigFormat)
+        renderCodeSection(sparksExtConfigFormat)
     end)
     
     ui_nextColumn()
@@ -541,7 +574,7 @@ local renderExtConfigCodeTable = function()
     -- Smoke ext_config.ini section
     UIOperations_createDisabledSection(not smokeInstance.enabled, function()
         local smokeExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
-        renderExtConfigFormatSection(smokeExtConfigFormat)
+        renderCodeSection(smokeExtConfigFormat)
     end)
     
     -- finish the ext_config_sections table
@@ -671,9 +704,9 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     
     --ui_separator()
 
-    ui.tabBar('someTabBarID', function ()
-        ui.tabItem('ext_config.ini', renderExtConfigCodeTable)
-        ui.tabItem('LUA', function () end)
+    ui.tabBar('CodeSectionsTabBar', function ()
+        ui.tabItem('ext_config.ini', renderExtConfigCodeTables)
+        ui.tabItem('LUA', renderLuaCodeSectionTables)
     end)
 
     --[===[

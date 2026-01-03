@@ -36,7 +36,8 @@ local UIOperations_renderCheckbox = UIOperations.renderCheckbox
 
 local UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab = UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
 
-local POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR = rgbm.colors.yellow
+local POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR = rgbm(0.588, 0.544, 0.039, .5) -- yellowish
+local POSITION_OFFSET_SETTING_LABEL_TOOLTIP = 'The values set here will be added to the Position values both when emitting the particles and also when saving the particle effect to the ext_config.ini file.\n\nThis is useful to fine-tune the position of the effect.'
 
 local UI_HEADER_TEXT_FONT_SIZE = 15
 local DEFAULT_SLIDER_WIDTH = 200
@@ -182,14 +183,13 @@ local renderPositionSection = function(particleEffectInstance)
                 local buttonText = particleEffectInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
                 return UIOperations_renderButton(
                     buttonText, 
-                    'Set the particle effect position by clicking on the track.'
+                    'Set the particle effect position by clicking on the track.\n\nIf the particle effect is not appearing at the exact position where you click, make sure that the Position Offset value is set to 0.\n\nThe final position saved in the ext_config.ini file is this Position value plus the Position Offset value.'
                 )
             end
         ) then
             particleEffectInstance.waitingForClickToSetPosition  = true
         end
 end
-
 
 local renderFlamesSection = function()
     ui_pushID("FlamesSection")
@@ -207,6 +207,9 @@ local renderFlamesSection = function()
         
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset])
+        if ui.itemHovered() then
+            ui.setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+        end
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = flameInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = flameInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
@@ -269,6 +272,9 @@ local renderSparksSection = function()
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset])
+        if ui.itemHovered() then
+            ui.setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+        end
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = sparksInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = sparksInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
@@ -333,6 +339,9 @@ local renderSmokeSection = function()
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset])
+        if ui.itemHovered() then
+            ui.setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+        end
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = smokeInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = smokeInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab

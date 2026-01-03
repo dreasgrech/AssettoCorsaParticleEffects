@@ -139,7 +139,7 @@ end
 
 ---Renders a slider with a tooltip
 ---@param label string @Slider label.
----@param tooltip string
+---@param tooltip string|nil @Tooltip text.
 ---@param value refnumber|number @Current slider value.
 ---@param minValue number? @Default value: 0.
 ---@param maxValue number? @Default value: 1.
@@ -160,7 +160,8 @@ UIOperations.renderSlider = function(label, tooltip, value, minValue, maxValue, 
     ui_popItemWidth()
 
     if ui_itemHovered() then
-        tooltip = string_format('%s\n\nDefault: %.2f', tooltip, defaultValue)
+        -- tooltip = string_format('%s\n\nDefault: %.2f', tooltip, defaultValue)
+        tooltip = string_format('%s%sDefault: %.2f', tooltip, tooltip ~= '' and '\n\n' or '', defaultValue)
 
         -- render the tooltip
         ui_setTooltip(tooltip)

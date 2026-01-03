@@ -93,7 +93,7 @@ local settingNotSupportedTooltip = 'Warning: This setting is not supported by ex
 
 -- only used to fill in DoD tables, memory freed right after
 local optionsCollection_beforeDoD = {
-    { name = StorageManager.Options.Flame_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable Flames' },
+    { name = StorageManager.Options.Flame_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable the Flames particle effect' },
     { name = StorageManager.Options.Flame_Position, default=vec3(0,0,0), min=nil, max=nil, label='Position', tooltip='Flame position in world coordinates' },
     { name = StorageManager.Options.Flame_PositionOffset, default=vec3(0,0,0), min=POSITION_OFFSET_MIN, max=POSITION_OFFSET_MAX, label='Position Offset', tooltip='Offset in position from the base position' },
     { name = StorageManager.Options.Flame_Velocity, default=vec3(0,1,0), min=-100, max=100, label='Velocity', tooltip='Flame initial velocity' },
@@ -103,7 +103,7 @@ local optionsCollection_beforeDoD = {
     { name = StorageManager.Options.Flame_FlameIntensity, default=0.0, min=0, max=10, label='Flame Intensity', tooltip='Flame intensity affecting flame look and behaviour.' },
     { name = StorageManager.Options.Flame_Amount, default=1, min=0, max=5, label='Amount', tooltip='The amount of particles emitted' }, -- max=5 value from conversation with Ilya
     
-    { name = StorageManager.Options.Sparks_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable Sparks' },
+    { name = StorageManager.Options.Sparks_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable the Sparks particle effect' },
     { name = StorageManager.Options.Sparks_Position, default=vec3(0,0,0), min=nil, max=nil, label='Position', tooltip='Sparks position in world coordinates' },
     { name = StorageManager.Options.Sparks_PositionOffset, default=vec3(0,0,0), min=POSITION_OFFSET_MIN, max=POSITION_OFFSET_MAX, label='Position Offset', tooltip='Offset in position from the base position' },
     { name = StorageManager.Options.Sparks_Velocity, default=vec3(0,1,0), min=-100, max=100, label='Velocity', tooltip='Sparks initial velocity' },
@@ -114,7 +114,7 @@ local optionsCollection_beforeDoD = {
     { name = StorageManager.Options.Sparks_PositionSpread, default=0.2, min=0, max=10, label='Position Spread', tooltip='How much sparks position vary' },
     { name = StorageManager.Options.Sparks_Amount, default=1, min=0, max=5, label='Amount', tooltip='The amount of particles emitted' }, -- max=5 value from conversation with Ilya
     
-    { name = StorageManager.Options.Smoke_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable Smoke' },
+    { name = StorageManager.Options.Smoke_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable the Smoke particle effect' },
     { name = StorageManager.Options.Smoke_Position, default=vec3(0,0,0), min=nil, max=nil, label='Position', tooltip='Smoke position in world coordinates' },
     { name = StorageManager.Options.Smoke_PositionOffset, default=vec3(0,0,0), min=POSITION_OFFSET_MIN, max=POSITION_OFFSET_MAX, label='Position Offset', tooltip='Offset in position from the base position' },
     { name = StorageManager.Options.Smoke_Velocity, default=vec3(0,1,0), min=-100, max=100, label='Velocity', tooltip='Smoke initial velocity' },

@@ -461,15 +461,25 @@ end
 function script.MANIFEST__FUNCTION_MAIN(dt)
     ui.textColored('Particle Effects is a helper app for adding particle effects to tracks.', rgbm(1, 1, 1, 1))
     UIOperations_newLine(1)
+--[==[
     ui.textColored('To add a particle effect to this track, first set a position using the button and once you are satisfied with your options, click the generated code below and paste it into the', rgbm(1, 1, 1, 0.7))
     ui_sameLine()
     renderOpenTrackExtConfigLink()
+--]==]
 
-    --UIOperations_newLine(1)
-
-    ui.textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
+    ui.textColored(
+    'To add a particle effect to this track, set a position using the [Set Position] button and once you are satisfied with your options, save it to the track using the Save buttons below.', rgbm(1, 1, 1, 0.7))
 
     UIOperations_newLine(1)
+
+    -- ui.textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
+    ui.textColored('Alternatively you can click on the generated ext_config code below and paste it into the ext_config.ini file manually.', rgbm(1, 1, 1, 0.7))
+    -- UIOperations_newLine(1)
+    ui.alignTextToFramePadding() -- called to align text properly with the button
+    ui.textColored('The ext_config.ini files can be found from:', rgbm(1, 1, 1, 0.7))
+    ui_sameLine()
+
+    --UIOperations_newLine(1)
 
     if UIOperations_renderButton(
         'Open global track config', 

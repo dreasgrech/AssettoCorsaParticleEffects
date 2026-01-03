@@ -59,6 +59,20 @@ local UI_HEADER_TEXT_FONT_SIZE = 15
 local DEFAULT_SLIDER_WIDTH = 200
 local DEFAULT_SLIDER_FORMAT = '%.2f'
 
+local openGlobalTrackConfigButtonToolTipText = string_format(
+    'Open the track main config file which is applied for all layouts of this track.\n\nRight click to show the file in its directory instead.\n\n%s', 
+    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
+)
+
+local openTrackLayoutConfigButtonTooltipText = string_format(
+    'Open the track layout config file which is applied for only this layout.\n\nRight click to show the file in its directory instead.\n\n%s', 
+    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
+)
+
+if ExtConfigFileHandler.isTrackLayoutFileSameAsTrackFile() then
+    openTrackLayoutConfigButtonTooltipText = openTrackLayoutConfigButtonTooltipText .. '\n\n\n(Note: This track only has one layout, so the global track config is used.)'
+end
+
 --[======[
 ---Flame emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later.
 ---Use `:emit(position, velocity, amount)` to actually emit flames.
@@ -501,18 +515,77 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
     end
 end
 
-local openGlobalTrackConfigButtonToolTipText = string_format(
-    'Open the track main config file which is applied for all layouts of this track.\n\nRight click to show the file in its directory instead.\n\n%s', 
-    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
-)
+local renderExtConfigCodeTable = function()
+    -- The table for the ext_config.ini code sections
+    ui_columns(3, true, "ext_config_sections")
+    ui_setColumnWidth(0, COLUMNS_WIDTH)
+    ui_setColumnWidth(1, COLUMNS_WIDTH)
+    ui_setColumnWidth(2, COLUMNS_WIDTH)
 
-local openTrackLayoutConfigButtonTooltipText = string_format(
-    'Open the track layout config file which is applied for only this layout.\n\nRight click to show the file in its directory instead.\n\n%s', 
-    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
-)
+    -- Flames ext_config.ini section
+    UIOperations_createDisabledSection(not flameInstance.enabled, function()
+        local flameExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        renderExtConfigFormatSection(flameExtConfigFormat)
+    end)
+    
+    ui_nextColumn()
+    
+    -- Sparks ext_config.ini section
+    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
+        local sparksExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        renderExtConfigFormatSection(sparksExtConfigFormat)
+    end)
+    
+    ui_nextColumn()
+    
+    -- Smoke ext_config.ini section
+    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
+        local smokeExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        renderExtConfigFormatSection(smokeExtConfigFormat)
+    end)
+    
+    -- finish the ext_config_sections table
+    ui_columns(1, false)
 
-if ExtConfigFileHandler.isTrackLayoutFileSameAsTrackFile() then
-    openTrackLayoutConfigButtonTooltipText = openTrackLayoutConfigButtonTooltipText .. '\n\n\n(Note: This track only has one layout, so the global track config is used.)'
+    UIOperations_newLine(1)
+
+    ui_columns(3, true, "export_sections")
+    ui_setColumnWidth(0, COLUMNS_WIDTH)
+    ui_setColumnWidth(1, COLUMNS_WIDTH)
+    ui_setColumnWidth(2, COLUMNS_WIDTH)
+
+    ui_pushID("ExportFlameSection")
+    UIOperations_createDisabledSection(not flameInstance.enabled, function()
+        renderExportButtons(ParticleEffectsType.Flame, flameInstance)
+    end)
+    ui_popID()
+
+    ui_nextColumn()
+
+    ui_pushID("ExportSparksSection")
+    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
+        renderExportButtons(ParticleEffectsType.Sparks, sparksInstance)
+    end)
+    ui_popID()
+
+    ui_nextColumn()
+
+    ui_pushID("ExportSmokeSection")
+    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
+        renderExportButtons(ParticleEffectsType.Smoke, smokeInstance)
+    end)
+    ui_popID()
+
+    -- finish the export_sections table
+    ui_columns(1, false)
+
+    UIOperations_newLine(2)
+
+    -- ui_textColored('Note: Internally, the CSP lua API is independent from the way ext_config.ini is handled.  This means that you might not always get the exact same results when the particle effects are saved to the ext_config.ini file.', rgbm(1, 1, 0, 1))
+    ui_textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
+    ui_textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
+    --UIOperations_newLine(1)
+
 end
 
 -- Function defined in manifest.ini
@@ -597,76 +670,11 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     UIOperations_newLine(1)
     
     --ui_separator()
-    
-    -- The table for the ext_config.ini code sections
-    ui_columns(3, true, "ext_config_sections")
-    ui_setColumnWidth(0, COLUMNS_WIDTH)
-    ui_setColumnWidth(1, COLUMNS_WIDTH)
-    ui_setColumnWidth(2, COLUMNS_WIDTH)
 
-    -- Flames ext_config.ini section
-    UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        local flameExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
-        renderExtConfigFormatSection(flameExtConfigFormat)
+    ui.tabBar('someTabBarID', function ()
+        ui.tabItem('ext_config.ini', renderExtConfigCodeTable)
+        ui.tabItem('LUA', function () end)
     end)
-    
-    ui_nextColumn()
-    
-    -- Sparks ext_config.ini section
-    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        local sparksExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
-        renderExtConfigFormatSection(sparksExtConfigFormat)
-    end)
-    
-    ui_nextColumn()
-    
-    -- Smoke ext_config.ini section
-    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        local smokeExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
-        renderExtConfigFormatSection(smokeExtConfigFormat)
-    end)
-    
-    -- finish the ext_config_sections table
-    ui_columns(1, false)
-
-    UIOperations_newLine(1)
-
-    ui_columns(3, true, "export_sections")
-    ui_setColumnWidth(0, COLUMNS_WIDTH)
-    ui_setColumnWidth(1, COLUMNS_WIDTH)
-    ui_setColumnWidth(2, COLUMNS_WIDTH)
-
-    ui_pushID("ExportFlameSection")
-    UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        renderExportButtons(ParticleEffectsType.Flame, flameInstance)
-    end)
-    ui_popID()
-
-    ui_nextColumn()
-
-    ui_pushID("ExportSparksSection")
-    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        renderExportButtons(ParticleEffectsType.Sparks, sparksInstance)
-    end)
-    ui_popID()
-
-    ui_nextColumn()
-
-    ui_pushID("ExportSmokeSection")
-    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        renderExportButtons(ParticleEffectsType.Smoke, smokeInstance)
-    end)
-    ui_popID()
-
-    -- finish the export_sections table
-    ui_columns(1, false)
-
-    UIOperations_newLine(2)
-
-    -- ui_textColored('Note: Internally, the CSP lua API is independent from the way ext_config.ini is handled.  This means that you might not always get the exact same results when the particle effects are saved to the ext_config.ini file.', rgbm(1, 1, 0, 1))
-    ui_textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
-    ui_textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
-    --UIOperations_newLine(1)
 
     --[===[
     -- Andreas: use this to determine the window size to be set in the manifest.ini file

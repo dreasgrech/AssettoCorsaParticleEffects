@@ -1,5 +1,6 @@
 ﻿local ExtConfigCodeGenerator = {}
 
+-- local bindings
 local MathOperations_splitVelocity = MathOperations.splitVelocity
 local StringBuilder = StringBuilder
 local StringBuilder_clear = StringBuilder.clear

@@ -1,7 +1,6 @@
 local LuaParticleEffectsCodeGenerator = {}
 
 -- local bindings
-local MathOperations_splitVelocity = MathOperations.splitVelocity
 local StringBuilder = StringBuilder
 local StringBuilder_clear = StringBuilder.clear
 local StringBuilder_append = StringBuilder.append
@@ -62,12 +61,7 @@ local generators_extraUnderInitialization = {
 --- Generate lua code for the given particle effect
 ---@param effectType ParticleEffectsType
 ---@param effectWrapper FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
--- ---@param effect ac.Particles.Flame|ac.Particles.Smoke|ac.Particles.Sparks
--- ---@param position vec3
--- ---@param velocity vec3
--- ---@param amount number
 ---@return string
--- LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effect, position, velocity, amount)
 LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectWrapper)
     local effect = effectWrapper.effect
     local position = effectWrapper.getFinalPosition()
@@ -89,6 +83,7 @@ LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectWrappe
 
     StringBuilder_append('')
 
+    -- check if this effect type has extra code to add under initialization
     local extraCodeUnderInitializationGenerator = generators_extraUnderInitialization[effectType]
     if extraCodeUnderInitializationGenerator ~= nil then
         extraCodeUnderInitializationGenerator(effectWrapper)

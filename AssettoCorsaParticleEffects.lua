@@ -16,8 +16,12 @@ ExtConfigFileHandler = require('ExtConfigFileHandler')
 ParticleEffectsExtConfigFileHandler = require("ParticleEffectsExtConfigFileHandler")
 
 -- local bindings
+local bit = bit
+local bit_bor = bit.bor
 local ac = ac
 local ac_getSim = ac.getSim
+local ac_setClipboardText = ac.setClipboardText
+local ac_setMessage = ac.setMessage
 local ui = ui
 local ui_columns = ui.columns
 local ui_setColumnWidth = ui.setColumnWidth
@@ -26,13 +30,25 @@ local ui_sameLine = ui.sameLine
 local ui_pushID = ui.pushID
 local ui_popID = ui.popID
 local ui_text = ui.text
+local ui_textColored = ui.textColored
 local ui_nextColumn = ui.nextColumn
 local ui_button = ui.button
+local ui_alignTextToFramePadding = ui.alignTextToFramePadding
+local ui_itemHovered = ui.itemHovered
+local ui_setTooltip = ui.setTooltip
+local ui_setMouseCursor = ui.setMouseCursor
+local ui_itemClicked = ui.itemClicked
+local ui_separator = ui.separator
 local string_format = string.format
 local UIOperations_newLine = UIOperations.newLine
 local UIOperations_renderButton = UIOperations.renderButton
 local UIOperations_renderSlider = UIOperations.renderSlider
 local UIOperations_renderCheckbox = UIOperations.renderCheckbox
+local UIOperations_renderColorButton = UIOperations.renderColorButton
+local UIOperations_renderVec3Sliders = UIOperations.renderVec3Sliders
+local UIOperations_renderColorPicker = UIOperations.renderColorPicker
+local UIOperations_tryGetWorldPositionFromMouseClick = UIOperations.tryGetWorldPositionFromMouseClick
+local UIOperations_createDisabledSection = UIOperations.createDisabledSection
 
 local UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab = UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
 
@@ -73,7 +89,7 @@ function ac.Particles.Smoke(params) end
 local storage = StorageManager.getStorage()
 
 ---@type ui.ColorPickerFlags
-local colorPickerFlags = bit.bor(
+local colorPickerFlags = bit_bor(
   ui.ColorPickerFlags.PickerHueWheel
 )
 local colorPickerSize = vec2(DEFAULT_SLIDER_WIDTH, 20)
@@ -160,7 +176,7 @@ local setPositionButtonColors = {
 
 local renderPositionSection = function(particleEffectInstance)
         -- Show the position value label
-        ui.alignTextToFramePadding() -- called to align text properly with the button
+        ui_alignTextToFramePadding() -- called to align text properly with the button
         ui_text(string_format('Position: (%.2f, %.2f, %.2f)', particleEffectInstance.position.x, particleEffectInstance.position.y, particleEffectInstance.position.z))
 
         ui_sameLine()
@@ -177,7 +193,7 @@ local renderPositionSection = function(particleEffectInstance)
             buttonTextColor = setPositionButtonColors.waitingForClick_text
         end
 
-        if UIOperations.renderColorButton(
+        if UIOperations_renderColorButton(
             buttonNormalColor, buttonHoveredColor, buttonActiveColor, buttonTextColor,
             function()
                 local buttonText = particleEffectInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
@@ -202,29 +218,29 @@ local renderFlamesSection = function()
 
     UIOperations_newLine(1)
 
-    UIOperations.createDisabledSection(not flameInstance.enabled, function()
+    UIOperations_createDisabledSection(not flameInstance.enabled, function()
         renderPositionSection(flameInstance)
         
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset])
-        if ui.itemHovered() then
-            ui.setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+        if ui_itemHovered() then
+            ui_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
         end
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = flameInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = flameInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetZSliderGrabColor = flameInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
-        flameInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
+        flameInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
         
         UIOperations_newLine(1)
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_Velocity])
-        flameInstance.velocity = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_Velocity], flameInstance.velocity, StorageManager__options_min[StorageManager.Options.Flame_Velocity], StorageManager__options_max[StorageManager.Options.Flame_Velocity])
+        flameInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_Velocity], flameInstance.velocity, StorageManager__options_min[StorageManager.Options.Flame_Velocity], StorageManager__options_max[StorageManager.Options.Flame_Velocity])
 
         UIOperations_newLine(1)
 
-        flame.color = UIOperations.renderColorPicker(StorageManager__options_label[StorageManager.Options.Flame_Color], StorageManager__options_tooltip[StorageManager.Options.Flame_Color], flame.color, colorPickerFlags, colorPickerSize)
+        flame.color = UIOperations_renderColorPicker(StorageManager__options_label[StorageManager.Options.Flame_Color], StorageManager__options_tooltip[StorageManager.Options.Flame_Color], flame.color, colorPickerFlags, colorPickerSize)
         flame.size = renderOptionSlider(StorageManager.Options.Flame_Size, flame.size)
         flameInstance.amount = renderOptionSlider(StorageManager.Options.Flame_Amount, flameInstance.amount)
         UIOperations_newLine(1)
@@ -235,9 +251,9 @@ local renderFlamesSection = function()
     ui_popID()
 
     if flameInstance.waitingForClickToSetPosition then
-        local worldPositionFound, out_worldPosition = UIOperations.tryGetWorldPositionFromMouseClick()
+        local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
         if worldPositionFound then
-            ac.log('Flame position set to: ' .. tostring(out_worldPosition))
+            -- ac.log('Flame position set to: ' .. tostring(out_worldPosition))
             flameInstance.position = out_worldPosition
             flameInstance.waitingForClickToSetPosition = false
         end
@@ -267,29 +283,29 @@ local renderSparksSection = function()
     
     UIOperations_newLine(1)
     
-    UIOperations.createDisabledSection(not sparksInstance.enabled, function()
+    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
         renderPositionSection(sparksInstance)
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset])
-        if ui.itemHovered() then
-            ui.setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+        if ui_itemHovered() then
+            ui_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
         end
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = sparksInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = sparksInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetZSliderGrabColor = sparksInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
-        sparksInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset], sparksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Sparks_PositionOffset], StorageManager__options_max[StorageManager.Options.Sparks_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
+        sparksInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset], sparksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Sparks_PositionOffset], StorageManager__options_max[StorageManager.Options.Sparks_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
 
         UIOperations_newLine(1)
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_Velocity])
-        sparksInstance.velocity = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_Velocity], sparksInstance.velocity, StorageManager__options_min[StorageManager.Options.Sparks_Velocity], StorageManager__options_max[StorageManager.Options.Sparks_Velocity])
+        sparksInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_Velocity], sparksInstance.velocity, StorageManager__options_min[StorageManager.Options.Sparks_Velocity], StorageManager__options_max[StorageManager.Options.Sparks_Velocity])
         
         UIOperations_newLine(1)
 
-        sparks.color = UIOperations.renderColorPicker(StorageManager__options_label[StorageManager.Options.Sparks_Color], StorageManager__options_tooltip[StorageManager.Options.Sparks_Color], sparks.color, colorPickerFlags, colorPickerSize)
+        sparks.color = UIOperations_renderColorPicker(StorageManager__options_label[StorageManager.Options.Sparks_Color], StorageManager__options_tooltip[StorageManager.Options.Sparks_Color], sparks.color, colorPickerFlags, colorPickerSize)
         sparks.size = renderOptionSlider(StorageManager.Options.Sparks_Size, sparks.size)
         sparksInstance.amount = renderOptionSlider(StorageManager.Options.Sparks_Amount, sparksInstance.amount)
         UIOperations_newLine(1)
@@ -301,9 +317,9 @@ local renderSparksSection = function()
     ui_popID()
 
     if sparksInstance.waitingForClickToSetPosition then
-        local worldPositionFound, out_worldPosition = UIOperations.tryGetWorldPositionFromMouseClick()
+        local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
         if worldPositionFound then
-            ac.log('Sparks position set to: ' .. tostring(out_worldPosition))
+            -- ac.log('Sparks position set to: ' .. tostring(out_worldPosition))
             sparksInstance.position = out_worldPosition
             sparksInstance.waitingForClickToSetPosition = false
         end
@@ -334,29 +350,29 @@ local renderSmokeSection = function()
     
     UIOperations_newLine(1)
 
-    UIOperations.createDisabledSection(not smokeInstance.enabled, function()
+    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
         renderPositionSection(smokeInstance)
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset])
-        if ui.itemHovered() then
-            ui.setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+        if ui_itemHovered() then
+            ui_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
         end
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = smokeInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = smokeInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetZSliderGrabColor = smokeInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
-        smokeInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset], smokeInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Smoke_PositionOffset], StorageManager__options_max[StorageManager.Options.Smoke_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
+        smokeInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset], smokeInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Smoke_PositionOffset], StorageManager__options_max[StorageManager.Options.Smoke_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
 
         UIOperations_newLine(1)
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_Velocity])
-        smokeInstance.velocity = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_Velocity], smokeInstance.velocity, StorageManager__options_min[StorageManager.Options.Smoke_Velocity], StorageManager__options_max[StorageManager.Options.Smoke_Velocity])
+        smokeInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_Velocity], smokeInstance.velocity, StorageManager__options_min[StorageManager.Options.Smoke_Velocity], StorageManager__options_max[StorageManager.Options.Smoke_Velocity])
         
         UIOperations_newLine(1)
 
-        smoke.color = UIOperations.renderColorPicker(StorageManager__options_label[StorageManager.Options.Smoke_Color], StorageManager__options_tooltip[StorageManager.Options.Smoke_Color], smoke.color, colorPickerFlags, colorPickerSize)
+        smoke.color = UIOperations_renderColorPicker(StorageManager__options_label[StorageManager.Options.Smoke_Color], StorageManager__options_tooltip[StorageManager.Options.Smoke_Color], smoke.color, colorPickerFlags, colorPickerSize)
         smoke.size = renderOptionSlider(StorageManager.Options.Smoke_Size, smoke.size)
         smokeInstance.amount = renderOptionSlider(StorageManager.Options.Smoke_Amount, smokeInstance.amount)
         UIOperations_newLine(1)
@@ -373,10 +389,10 @@ local renderSmokeSection = function()
 
         local flags = 0
         if smokeInstance.disableCollisions then
-            flags = bit.bor(flags, ac.Particles.SmokeFlags.DisableCollisions)
+            flags = bit_bor(flags, ac.Particles.SmokeFlags.DisableCollisions)
         end
         if smokeInstance.fadeIn then
-            flags = bit.bor(flags, ac.Particles.SmokeFlags.FadeIn)
+            flags = bit_bor(flags, ac.Particles.SmokeFlags.FadeIn)
         end
         smoke.flags = flags
     end)
@@ -384,9 +400,9 @@ local renderSmokeSection = function()
     ui_popID()
 
     if smokeInstance.waitingForClickToSetPosition then
-        local worldPositionFound, out_worldPosition = UIOperations.tryGetWorldPositionFromMouseClick()
+        local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
         if worldPositionFound then
-            ac.log('Smoke position set to: ' .. tostring(out_worldPosition))
+            -- ac.log('Smoke position set to: ' .. tostring(out_worldPosition))
             smokeInstance.position = out_worldPosition
             smokeInstance.waitingForClickToSetPosition = false
         end
@@ -416,22 +432,23 @@ local COLUMNS_WIDTH = 370
 local renderExtConfigFormatSection = function(extConfigFormat)
     ui_text(extConfigFormat)
 
-    if ui.itemHovered() then
-        ui.setMouseCursor(ui.MouseCursor.Hand)
-        ui.setTooltip('Click to copy to clipboard')
+    if ui_itemHovered() then
+        ui_setMouseCursor(ui.MouseCursor.Hand)
+        ui_setTooltip('Click to copy to clipboard')
     end
 
-    if ui.itemClicked(ui.MouseButton.Left, true) then
-        ac.setClipboardText(extConfigFormat)
-        ac.setMessage('Copied', 'Copied to clipboard', nil, 5.0)
+    if ui_itemClicked(ui.MouseButton.Left, true) then
+        ac_setClipboardText(extConfigFormat)
+        ac_setMessage('Copied', 'Copied to clipboard', nil, 5.0)
     end
 end
 
 -- TODO: most of this stuff has moved to ExtConfigFileHandler.lua - refactor this to use that module properly
-local EXTENSION_PATH = '/extension/'
-local EXT_CONFIG_FILENAME = 'ext_config.ini'
-local EXT_CONFIG_RELATIVE_PATH = EXTENSION_PATH .. EXT_CONFIG_FILENAME
+-- local EXTENSION_PATH = '/extension/'
+-- local EXT_CONFIG_FILENAME = 'ext_config.ini'
+-- local EXT_CONFIG_RELATIVE_PATH = EXTENSION_PATH .. EXT_CONFIG_FILENAME
 
+--[===[
 local function renderOpenTrackExtConfigLink()
   local trackLayoutFolder = ac.getFolder(ac.FolderID.CurrentTrackLayout)
   if not trackLayoutFolder or trackLayoutFolder == '' then
@@ -450,10 +467,11 @@ local function renderOpenTrackExtConfigLink()
     end
   end
 
-  if ui.itemHovered() then
-    ui.setMouseCursor(ui.MouseCursor.Hand)
+  if ui_itemHovered() then
+    ui_setMouseCursor(ui.MouseCursor.Hand)
   end
 end
+--]===]
 
 ---@param particleEffectsType ParticleEffectsType
 ---@param particleEffectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
@@ -466,7 +484,7 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         )
     ) then
         ParticleEffectsExtConfigFileHandler.writeToExtConfig(ExtConfigFileHandler.ExtConfigFileTypes.Track, particleEffectsType, particleEffectInstance)
-        ac.setMessage('Saved', string_format('Particle effect saved to global track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)), nil, 5.0)
+        ac_setMessage('Saved', string_format('Particle effect saved to global track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)), nil, 5.0)
     end
 
     ui_sameLine()
@@ -479,7 +497,7 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         )
     ) then
         ParticleEffectsExtConfigFileHandler.writeToExtConfig(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout, particleEffectsType, particleEffectInstance)
-        ac.setMessage('Saved', string_format('Particle effect saved to track layout config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)), nil, 5.0)
+        ac_setMessage('Saved', string_format('Particle effect saved to track layout config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)), nil, 5.0)
     end
 end
 
@@ -501,24 +519,24 @@ end
 -- wiki: function to be called each frame to draw window content
 ---
 function script.MANIFEST__FUNCTION_MAIN(dt)
-    ui.textColored('Particle Effects is a helper app for adding particle effects to tracks.', rgbm(1, 1, 1, 1))
+    ui_textColored('Particle Effects is a helper app for adding particle effects to tracks.', rgbm(1, 1, 1, 1))
     UIOperations_newLine(1)
 --[==[
-    ui.textColored('To add a particle effect to this track, first set a position using the button and once you are satisfied with your options, click the generated code below and paste it into the', rgbm(1, 1, 1, 0.7))
+    ui_textColored('To add a particle effect to this track, first set a position using the button and once you are satisfied with your options, click the generated code below and paste it into the', rgbm(1, 1, 1, 0.7))
     ui_sameLine()
     renderOpenTrackExtConfigLink()
 --]==]
 
-    ui.textColored(
+    ui_textColored(
     'To add a particle effect to this track, set a position using the [Set Position] button and once you are satisfied with your options, save it to the track using the Save buttons below.', rgbm(1, 1, 1, 0.7))
 
     UIOperations_newLine(1)
 
-    -- ui.textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
-    ui.textColored('Alternatively you can click on the generated ext_config code below and paste it into the ext_config.ini file manually.', rgbm(1, 1, 1, 0.7))
+    -- ui_textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
+    ui_textColored('Alternatively you can click on the generated ext_config code below and paste it into the ext_config.ini file manually.', rgbm(1, 1, 1, 0.7))
     -- UIOperations_newLine(1)
-    ui.alignTextToFramePadding() -- called to align text properly with the button
-    ui.textColored('The ext_config.ini files can be found from:', rgbm(1, 1, 1, 0.7))
+    ui_alignTextToFramePadding() -- called to align text properly with the button
+    ui_textColored('The ext_config.ini files can be found from:', rgbm(1, 1, 1, 0.7))
     ui_sameLine()
 
     --UIOperations_newLine(1)
@@ -551,7 +569,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     UIOperations_newLine(1)
 
-    ui.separator()
+    ui_separator()
 
     UIOperations_newLine(1)
 
@@ -578,7 +596,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     UIOperations_newLine(1)
     
-    --ui.separator()
+    --ui_separator()
     
     -- The table for the ext_config.ini code sections
     ui_columns(3, true, "ext_config_sections")
@@ -587,7 +605,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ui_setColumnWidth(2, COLUMNS_WIDTH)
 
     -- Flames ext_config.ini section
-    UIOperations.createDisabledSection(not flameInstance.enabled, function()
+    UIOperations_createDisabledSection(not flameInstance.enabled, function()
         local flameExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
         renderExtConfigFormatSection(flameExtConfigFormat)
     end)
@@ -595,7 +613,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ui_nextColumn()
     
     -- Sparks ext_config.ini section
-    UIOperations.createDisabledSection(not sparksInstance.enabled, function()
+    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
         local sparksExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
         renderExtConfigFormatSection(sparksExtConfigFormat)
     end)
@@ -603,7 +621,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ui_nextColumn()
     
     -- Smoke ext_config.ini section
-    UIOperations.createDisabledSection(not smokeInstance.enabled, function()
+    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
         local smokeExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
         renderExtConfigFormatSection(smokeExtConfigFormat)
     end)
@@ -619,7 +637,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ui_setColumnWidth(2, COLUMNS_WIDTH)
 
     ui_pushID("ExportFlameSection")
-    UIOperations.createDisabledSection(not flameInstance.enabled, function()
+    UIOperations_createDisabledSection(not flameInstance.enabled, function()
         renderExportButtons(ParticleEffectsType.Flame, flameInstance)
     end)
     ui_popID()
@@ -627,7 +645,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ui_nextColumn()
 
     ui_pushID("ExportSparksSection")
-    UIOperations.createDisabledSection(not sparksInstance.enabled, function()
+    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
         renderExportButtons(ParticleEffectsType.Sparks, sparksInstance)
     end)
     ui_popID()
@@ -635,7 +653,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ui_nextColumn()
 
     ui_pushID("ExportSmokeSection")
-    UIOperations.createDisabledSection(not smokeInstance.enabled, function()
+    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
         renderExportButtons(ParticleEffectsType.Smoke, smokeInstance)
     end)
     ui_popID()
@@ -645,9 +663,9 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     UIOperations_newLine(2)
 
-    -- ui.textColored('Note: Internally, the CSP lua API is independent from the way ext_config.ini is handled.  This means that you might not always get the exact same results when the particle effects are saved to the ext_config.ini file.', rgbm(1, 1, 0, 1))
-    ui.textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
-    ui.textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
+    -- ui_textColored('Note: Internally, the CSP lua API is independent from the way ext_config.ini is handled.  This means that you might not always get the exact same results when the particle effects are saved to the ext_config.ini file.', rgbm(1, 1, 0, 1))
+    ui_textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
+    ui_textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
     UIOperations_newLine(1)
 end
 
@@ -704,8 +722,8 @@ end
 ---
 -- wiki: called when transparent objects are finished rendering
 ---
-function script.MANIFEST__TRANSPARENT(dt)
-end
+-- function script.MANIFEST__TRANSPARENT(dt)
+-- end
 
 --[==[
 local extCfgSys = ac.getFolder(ac.FolderID.ExtCfgSys)

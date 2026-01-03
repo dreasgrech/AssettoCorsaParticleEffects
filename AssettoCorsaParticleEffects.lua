@@ -34,6 +34,9 @@ local UIOperations_renderButton = UIOperations.renderButton
 local UIOperations_renderSlider = UIOperations.renderSlider
 local UIOperations_renderCheckbox = UIOperations.renderCheckbox
 
+local UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab = UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
+
+local POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR = rgbm.colors.yellow
 
 local UI_HEADER_TEXT_FONT_SIZE = 15
 local DEFAULT_SLIDER_WIDTH = 200
@@ -185,8 +188,8 @@ local renderPositionSection = function(particleEffectInstance)
         ) then
             particleEffectInstance.waitingForClickToSetPosition  = true
         end
-
 end
+
 
 local renderFlamesSection = function()
     ui_pushID("FlamesSection")
@@ -204,7 +207,11 @@ local renderFlamesSection = function()
         
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset])
-        flameInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset])
+        -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
+        local positionOffsetXSliderGrabColor = flameInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetYSliderGrabColor = flameInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetZSliderGrabColor = flameInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        flameInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
         
         UIOperations_newLine(1)
 
@@ -262,7 +269,11 @@ local renderSparksSection = function()
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset])
-        sparksInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset], sparksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Sparks_PositionOffset], StorageManager__options_max[StorageManager.Options.Sparks_PositionOffset])
+        -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
+        local positionOffsetXSliderGrabColor = sparksInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetYSliderGrabColor = sparksInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetZSliderGrabColor = sparksInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        sparksInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset], sparksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Sparks_PositionOffset], StorageManager__options_max[StorageManager.Options.Sparks_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
 
         UIOperations_newLine(1)
 
@@ -322,7 +333,11 @@ local renderSmokeSection = function()
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset])
-        smokeInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset], smokeInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Smoke_PositionOffset], StorageManager__options_max[StorageManager.Options.Smoke_PositionOffset])
+        -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
+        local positionOffsetXSliderGrabColor = smokeInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetYSliderGrabColor = smokeInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetZSliderGrabColor = smokeInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        smokeInstance.positionOffset = UIOperations.renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset], smokeInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Smoke_PositionOffset], StorageManager__options_max[StorageManager.Options.Smoke_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
 
         UIOperations_newLine(1)
 

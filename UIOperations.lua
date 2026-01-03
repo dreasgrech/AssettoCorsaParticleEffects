@@ -20,6 +20,10 @@ local render = render
 
 local UIOperations = {}
 
+UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
+    sliderGrab = ui.styleColor(ui.StyleColor.SliderGrab),
+}
+
 ---Color button control. Returns true if color has changed (as usual with Lua, colors are passed)
 ---by reference so update value would be put in place of old one automatically.
 ---@param label string
@@ -192,15 +196,32 @@ end
 ---@param minValue number @Minimum slider value.
 ---@param maxValue number @Maximum slider value.
 ---@param format string|'X: %.3f'|'Y: %.3f'|'Z: %.3f'|nil @C-style format string. Default value: `'X: %.3f'`, `'Y: %.3f'`, `'Z: %.3f'
+---@param xSliderGrabColor rgbm|nil @Optional custom color for the X slider grab.
+---@param ySliderGrabColor rgbm|nil @Optional custom color for the Y slider grab.
+---@param zSliderGrabColor rgbm|nil @Optional custom color for the Z slider grab.
 ---@return vec3 newValue
-UIOperations.renderVec3Sliders = function(label, value, minValue, maxValue, format)
+UIOperations.renderVec3Sliders = function(label, value, minValue, maxValue, format, xSliderGrabColor, ySliderGrabColor, zSliderGrabColor)
     ui_pushID(label)
 
+
+    local xGrabColor = xSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
+    ui.pushStyleColor(ui.StyleColor.SliderGrab, xGrabColor)
     local x = UIOperations.renderSlider('##x', '', value.x, minValue, maxValue, 350, format or 'X: %.3f', 0)
+    ui.popStyleColor()
+
     --ui_sameLine()
+
+    local yGrabColor = ySliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
+    ui.pushStyleColor(ui.StyleColor.SliderGrab, yGrabColor)
     local y = UIOperations.renderSlider('##y', '', value.y, minValue, maxValue, 350, format or 'Y: %.3f', 0)
+    ui.popStyleColor()
+
     --ui_sameLine()
+
+    local zGrabColor = zSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
+    ui.pushStyleColor(ui.StyleColor.SliderGrab, zGrabColor)
     local z = UIOperations.renderSlider('##z', '', value.z, minValue, maxValue, 350, format or 'Z: %.3f', 0)
+    ui.popStyleColor()
 
     ui_popID()
 

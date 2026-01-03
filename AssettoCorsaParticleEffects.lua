@@ -524,7 +524,8 @@ local renderLuaCodeSectionTables = function()
 
     -- Flames ext_config.ini section
     UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        -- local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Flame, flameInstance)
         renderCodeSection(luaCode)
     end)
 
@@ -532,7 +533,8 @@ local renderLuaCodeSectionTables = function()
 
     -- Sparks ext_config.ini section
     UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        -- local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparksInstance)
         renderCodeSection(luaCode)
     end)
 
@@ -540,7 +542,8 @@ local renderLuaCodeSectionTables = function()
 
     -- Smoke ext_config.ini section
     UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        -- local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Smoke, smokeInstance)
         renderCodeSection(luaCode)
     end)
 

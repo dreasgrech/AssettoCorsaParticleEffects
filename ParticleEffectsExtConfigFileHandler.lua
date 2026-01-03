@@ -1,6 +1,8 @@
 local ParticleEffectsExtConfigFileHandler = {}
 
+-- local bindings
 local MathOperations_splitVelocity = MathOperations.splitVelocity
+local ExtConfigCodeGenerator_getExtConfigKeyName = ExtConfigCodeGenerator.getExtConfigKeyName
 
 local SectionPrefixes = ExtConfigDefinitions.SectionPrefixes
 local ExtConfigKeyType = ExtConfigDefinitions.ExtConfigKeyType
@@ -19,15 +21,15 @@ local writers = {
         local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
         local color = effect.color
 
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Position), position)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Direction), direction)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Speed), speed)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Intensity), amount)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Color), color)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Size), effect.size)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Position), position)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Direction), direction)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Speed), speed)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Intensity), amount)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Color), color)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Size), effect.size)
 
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.TemperatureMult), effect.temperatureMultiplier)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.FlameIntensity), effect.flameIntensity)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.TemperatureMult), effect.temperatureMultiplier)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.FlameIntensity), effect.flameIntensity)
 
         -- ac.log(string.format("Wrote FLAME section %s", fullSectionName))
     end,
@@ -41,17 +43,16 @@ local writers = {
         local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
         local color = effect.color
 
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Position), position)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Direction), direction)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Speed), speed)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Intensity), amount)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Color), color)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Size), effect.size)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Position), position)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Direction), direction)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Speed), speed)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Intensity), amount)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Color), color)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Size), effect.size)
 
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Life), effect.life)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.SpreadDir), effect.directionSpread)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.SpreadPos), effect.positionSpread)
-
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Life), effect.life)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.SpreadDir), effect.directionSpread)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.SpreadPos), effect.positionSpread)
         -- ac.log(string.format("Wrote SPARKS section %s", fullSectionName))
     end,
     ---@param file ac.INIConfig
@@ -64,19 +65,19 @@ local writers = {
         local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
         local color = effect.color
 
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Position), position)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Direction), direction)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Speed), speed)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Intensity), amount)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Color), color)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Size), effect.size)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Position), position)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Direction), direction)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Speed), speed)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Intensity), amount)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Color), color)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Size), effect.size)
 
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Life), effect.life)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.ColorConsistency), effect.colorConsistency)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Spread), effect.spreadK)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Grow), effect.growK)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.Thickness), effect.thickness)
-        file:set(fullSectionName, ExtConfigCodeGenerator.getExtConfigKeyName(ExtConfigKeyType.TargetYVelocity), effect.targetYVelocity)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Life), effect.life)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.ColorConsistency), effect.colorConsistency)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Spread), effect.spreadK)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Grow), effect.growK)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.Thickness), effect.thickness)
+        file:set(fullSectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.TargetYVelocity), effect.targetYVelocity)
 
         -- ac.log(string.format("Wrote SMOKE section %s", fullSectionName))
     end,

@@ -427,6 +427,7 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         ac.setMessage('Saved', string_format('Particle effect saved to global track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)), nil, 5.0)
     end
 
+    --[===[
     ui_sameLine()
 
     if UIOperations_renderButton(
@@ -443,8 +444,10 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         -- open the file directly
         ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.Track)
     end
+    --]===]
 
-    UIOperations_newLine(1)
+    -- UIOperations_newLine(1)
+    ui_sameLine()
 
     if UIOperations_renderButton(
         'Save to track layout config', 
@@ -455,6 +458,57 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
     ) then
         ParticleEffectsExtConfigFileHandler.writeToExtConfig(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout, particleEffectsType, particleEffectInstance)
         ac.setMessage('Saved', string_format('Particle effect saved to track layout config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)), nil, 5.0)
+    end
+
+    --[===[
+    ui_sameLine()
+
+    if UIOperations_renderButton(
+        'Open track layout config', 
+        string_format(
+            'Open the track layout config file which is applied for only this layout.\n\nRight click to show the file in its directory instead.\n\n%s', 
+            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
+        ),
+        function() 
+            -- show the file in its directory in explorer
+            ExtConfigFileHandler.showExtConfigFileInExplorer(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
+        end
+    ) then
+        -- open the file directly
+        ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
+    end
+    --]===]
+end
+
+-- Function defined in manifest.ini
+-- wiki: function to be called each frame to draw window content
+---
+function script.MANIFEST__FUNCTION_MAIN(dt)
+    ui.textColored('Particle Effects is a helper app for adding particle effects to tracks.', rgbm(1, 1, 1, 1))
+    UIOperations_newLine(1)
+    ui.textColored('To add a particle effect to this track, first set a position using the button and once you are satisfied with your options, click the generated code below and paste it into the', rgbm(1, 1, 1, 0.7))
+    ui_sameLine()
+    renderOpenTrackExtConfigLink()
+
+    --UIOperations_newLine(1)
+
+    ui.textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
+
+    UIOperations_newLine(1)
+
+    if UIOperations_renderButton(
+        'Open global track config', 
+        string_format(
+            'Open the track main config file which is applied for all layouts.\n\nRight click to show the file in its directory instead.\n\n%s', 
+            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
+        ),
+        function() 
+            -- show the file in its directory in explorer
+            ExtConfigFileHandler.showExtConfigFileInExplorer(ExtConfigFileHandler.ExtConfigFileTypes.Track)
+        end
+    ) then
+        -- open the file directly
+        ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.Track)
     end
 
     ui_sameLine()
@@ -473,21 +527,8 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
         -- open the file directly
         ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
     end
-end
 
--- Function defined in manifest.ini
--- wiki: function to be called each frame to draw window content
----
-function script.MANIFEST__FUNCTION_MAIN(dt)
-    ui.textColored('Particle Effects is a helper app for adding particle effects to tracks.', rgbm(1, 1, 1, 1))
     UIOperations_newLine(1)
-    ui.textColored('To add a particle effect to this track, first set a position using the button and once you are satisfied with your options, click the generated code below and paste it into the', rgbm(1, 1, 1, 0.7))
-    ui_sameLine()
-    renderOpenTrackExtConfigLink()
-
-    --UIOperations_newLine(1)
-
-    ui.textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
 
     ui.separator()
 

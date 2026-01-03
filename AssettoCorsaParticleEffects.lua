@@ -525,6 +525,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
         ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
     end
 
+    UIOperations_newLine(1)
 
     ui.separator()
 

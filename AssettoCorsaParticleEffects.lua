@@ -255,7 +255,7 @@ local renderOptionSlider = function(optionType, currentValue)
     return UIOperations_renderSlider(StorageManager__options_label[optionType], StorageManager__options_tooltip[optionType], currentValue, StorageManager__options_min[optionType], StorageManager__options_max[optionType], DEFAULT_SLIDER_WIDTH, DEFAULT_SLIDER_FORMAT, StorageManager__options_default[optionType])
 end
 
-local setPositionButtonColors = {
+local SETPOSITION_BUTTON_COLORS = {
     normal = rgbm(0.00, 0.352, 0.258, 1.0),
     hovered = rgbm(0.00, 0.433, 0.316, 1.0),
     active = rgbm(0.08, 0.55, 0.16, 1.0),
@@ -273,16 +273,16 @@ local renderPositionSection = function(particleEffectInstance)
 
         ui_sameLine()
 
-        local buttonNormalColor = setPositionButtonColors.normal
-        local buttonHoveredColor = setPositionButtonColors.hovered
-        local buttonActiveColor = setPositionButtonColors.active
-        local buttonTextColor = setPositionButtonColors.text
+        local buttonNormalColor = SETPOSITION_BUTTON_COLORS.normal
+        local buttonHoveredColor = SETPOSITION_BUTTON_COLORS.hovered
+        local buttonActiveColor = SETPOSITION_BUTTON_COLORS.active
+        local buttonTextColor = SETPOSITION_BUTTON_COLORS.text
 
         if particleEffectInstance.waitingForClickToSetPosition then
-            buttonNormalColor = setPositionButtonColors.waitingForClick_normal
-            buttonHoveredColor = setPositionButtonColors.waitingForClick_hovered
-            buttonActiveColor = setPositionButtonColors.waitingForClick_active
-            buttonTextColor = setPositionButtonColors.waitingForClick_text
+            buttonNormalColor = SETPOSITION_BUTTON_COLORS.waitingForClick_normal
+            buttonHoveredColor = SETPOSITION_BUTTON_COLORS.waitingForClick_hovered
+            buttonActiveColor = SETPOSITION_BUTTON_COLORS.waitingForClick_active
+            buttonTextColor = SETPOSITION_BUTTON_COLORS.waitingForClick_text
         end
 
         if UIOperations_renderColorButton(

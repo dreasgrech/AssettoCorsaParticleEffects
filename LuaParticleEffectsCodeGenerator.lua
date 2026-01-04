@@ -48,12 +48,19 @@ local generators_extraUnderInitialization = {
     [ParticleEffectsType.Smoke] = function (effectWrapper)
         local variableInstanceName = variableInstanceNames[ParticleEffectsType.Smoke]
 
+        local flagsWritten = false
         if effectWrapper.disableCollisions then
             StringBuilder_append(string.format("%s.flags = bit.bor(%s.flags, ac.Particles.SmokeFlags.DisableCollisions)", variableInstanceName, variableInstanceName))
+            flagsWritten = true
         end
 
         if effectWrapper.fadeIn then
             StringBuilder_append(string.format("%s.flags = bit.bor(%s.flags, ac.Particles.SmokeFlags.FadeIn)", variableInstanceName, variableInstanceName))
+            flagsWritten = true
+        end
+
+        if flagsWritten then
+            StringBuilder_append('')
         end
     end,
 }
@@ -87,7 +94,6 @@ LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectWrappe
     local extraCodeUnderInitializationGenerator = generators_extraUnderInitialization[effectType]
     if extraCodeUnderInitializationGenerator ~= nil then
         extraCodeUnderInitializationGenerator(effectWrapper)
-        StringBuilder_append('')
     end
 
     StringBuilder_append(string.format("-- Emit the %s effect in an update loop", variableInstanceName))

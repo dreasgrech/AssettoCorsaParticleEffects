@@ -128,8 +128,20 @@ local openTrackLayoutConfigButtonTooltipText = string_format(
     ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
 )
 
-if ExtConfigFileHandler.isTrackLayoutFileSameAsTrackFile() then
-    openTrackLayoutConfigButtonTooltipText = openTrackLayoutConfigButtonTooltipText .. '\n\n\n(Note: This track only has one layout, so the global track config is used.)'
+local ONE_LAYOUT_CONFIG_USED_TEXT = '(Note: This track only has one layout, so the global track config is used.)'
+
+local isTrackLayoutFileSameAsTrackFile = ExtConfigFileHandler.isTrackLayoutFileSameAsTrackFile()
+if isTrackLayoutFileSameAsTrackFile then
+    openTrackLayoutConfigButtonTooltipText = string_format('%s\n\n\n%s', openTrackLayoutConfigButtonTooltipText, ONE_LAYOUT_CONFIG_USED_TEXT)
+end
+
+local saveTrackLayoutConfigButtonTooltipText = string_format(
+    'Save the particle effect to the track layout config file which is applied for only this layout.\n\n%s', 
+    ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
+)
+
+if isTrackLayoutFileSameAsTrackFile then
+    saveTrackLayoutConfigButtonTooltipText = string_format('%s\n\n\n%s', saveTrackLayoutConfigButtonTooltipText, ONE_LAYOUT_CONFIG_USED_TEXT)
 end
 
 --[======[
@@ -550,27 +562,24 @@ end
 ---@param particleEffectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
 local renderExportButtons = function(particleEffectsType, particleEffectInstance)
     if UIOperations_renderButton(
-        'Save to global track config', 
+        'Save to global track config',
         string_format(
             'Save to the track main config file which is applied for all layouts of this track.\n\n%s', 
             ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
         )
     ) then
         ParticleEffectsExtConfigFileHandler.writeToExtConfig(ExtConfigFileHandler.ExtConfigFileTypes.Track, particleEffectsType, particleEffectInstance)
-        ac_setMessage('Saved', string_format('Particle effect saved to global track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)), nil, 5.0)
+        ac_setMessage('Saved', string_format('Particle effect saved to track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)), nil, 5.0)
     end
 
     ui_sameLine()
 
     if UIOperations_renderButton(
-        'Save to track layout config', 
-        string_format(
-            "Save to the track layout config file which is applied for only this layout.\nIf this track only has one layout, the global track config is used.\n\n%s",
-            ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
-        )
+        'Save to track layout config',
+        saveTrackLayoutConfigButtonTooltipText
     ) then
         ParticleEffectsExtConfigFileHandler.writeToExtConfig(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout, particleEffectsType, particleEffectInstance)
-        ac_setMessage('Saved', string_format('Particle effect saved to track layout config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)), nil, 5.0)
+        ac_setMessage('Saved', string_format('Particle effect saved to track config file: %s', ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)), nil, 5.0)
     end
 end
 

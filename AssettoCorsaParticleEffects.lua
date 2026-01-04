@@ -329,6 +329,9 @@ local renderFlamesSection = function()
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_Velocity])
+        if ui_itemHovered() then
+            ui_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Flame_Velocity])
+        end
         flameInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_Velocity], flameInstance.velocity, StorageManager__options_min[StorageManager.Options.Flame_Velocity], StorageManager__options_max[StorageManager.Options.Flame_Velocity])
 
         UIOperations_newLine(1)
@@ -394,6 +397,9 @@ local renderSparksSection = function()
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_Velocity])
+        if ui_itemHovered() then
+            ui_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Sparks_Velocity])
+        end
         sparksInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_Velocity], sparksInstance.velocity, StorageManager__options_min[StorageManager.Options.Sparks_Velocity], StorageManager__options_max[StorageManager.Options.Sparks_Velocity])
         
         UIOperations_newLine(1)
@@ -461,6 +467,9 @@ local renderSmokeSection = function()
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_Velocity])
+        if ui_itemHovered() then
+            ui_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Smoke_Velocity])
+        end
         smokeInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_Velocity], smokeInstance.velocity, StorageManager__options_min[StorageManager.Options.Smoke_Velocity], StorageManager__options_max[StorageManager.Options.Smoke_Velocity])
         
         UIOperations_newLine(1)

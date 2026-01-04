@@ -97,7 +97,7 @@ LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectWrappe
     end
 
     StringBuilder_append(string.format("-- Emit the %s effect in an update loop", variableInstanceName))
-    StringBuilder_append('function script.update(dt)')
+    StringBuilder_append('function script.update()')
     StringBuilder_append('\t-- emit(position, velocity, amount)')
     StringBuilder_append(string.format("\t%s:emit(vec3(%.3f, %.3f, %.3f), vec3(%.3f, %.3f, %.3f), %.3f)", variableInstanceName, position.x, position.y, position.z, velocity.x, velocity.y, velocity.z, amount))
     StringBuilder_append('end')

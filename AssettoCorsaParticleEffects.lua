@@ -293,7 +293,9 @@ local renderFlamesSection = function()
         local positionOffsetXSliderGrabColor = flameInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = flameInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetZSliderGrabColor = flameInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
-        flameInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
+        ---@type vec3
+        local positionOffsetDefaultValue = StorageManager__options_default[StorageManager.Options.Flame_PositionOffset]
+        flameInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset], flameInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Flame_PositionOffset], StorageManager__options_max[StorageManager.Options.Flame_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor, positionOffsetDefaultValue)
         
         UIOperations_newLine(1)
 
@@ -301,7 +303,9 @@ local renderFlamesSection = function()
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_Velocity])
         UIOperations_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Flame_Velocity])
 
-        flameInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_Velocity], flameInstance.velocity, StorageManager__options_min[StorageManager.Options.Flame_Velocity], StorageManager__options_max[StorageManager.Options.Flame_Velocity])
+        ---@type vec3
+        local velocityDefaultValue = StorageManager__options_default[StorageManager.Options.Flame_Velocity]
+        flameInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_Velocity], flameInstance.velocity, StorageManager__options_min[StorageManager.Options.Flame_Velocity], StorageManager__options_max[StorageManager.Options.Flame_Velocity], nil, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, velocityDefaultValue)
 
         UIOperations_newLine(1)
 
@@ -359,7 +363,9 @@ local renderSparksSection = function()
         local positionOffsetXSliderGrabColor = sparksInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = sparksInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetZSliderGrabColor = sparksInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
-        sparksInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset], sparksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Sparks_PositionOffset], StorageManager__options_max[StorageManager.Options.Sparks_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
+        ---@type vec3
+        local positionOffsetDefaultValue = StorageManager__options_default[StorageManager.Options.Sparks_PositionOffset]
+        sparksInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset], sparksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Sparks_PositionOffset], StorageManager__options_max[StorageManager.Options.Sparks_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor, positionOffsetDefaultValue)
 
         UIOperations_newLine(1)
 
@@ -367,7 +373,9 @@ local renderSparksSection = function()
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_Velocity])
         UIOperations_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Sparks_Velocity])
 
-        sparksInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_Velocity], sparksInstance.velocity, StorageManager__options_min[StorageManager.Options.Sparks_Velocity], StorageManager__options_max[StorageManager.Options.Sparks_Velocity])
+        ---@type vec3
+        local velocityDefaultValue = StorageManager__options_default[StorageManager.Options.Sparks_Velocity]
+        sparksInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_Velocity], sparksInstance.velocity, StorageManager__options_min[StorageManager.Options.Sparks_Velocity], StorageManager__options_max[StorageManager.Options.Sparks_Velocity], nil, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, velocityDefaultValue)
         
         UIOperations_newLine(1)
 
@@ -427,7 +435,9 @@ local renderSmokeSection = function()
         local positionOffsetXSliderGrabColor = smokeInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = smokeInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetZSliderGrabColor = smokeInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
-        smokeInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset], smokeInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Smoke_PositionOffset], StorageManager__options_max[StorageManager.Options.Smoke_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor)
+        ---@type vec3
+        local positionOffsetDefaultValue = StorageManager__options_default[StorageManager.Options.Smoke_PositionOffset]
+        smokeInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset], smokeInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Smoke_PositionOffset], StorageManager__options_max[StorageManager.Options.Smoke_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor, positionOffsetDefaultValue)
 
         UIOperations_newLine(1)
 
@@ -435,7 +445,9 @@ local renderSmokeSection = function()
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_Velocity])
         UIOperations_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Smoke_Velocity])
 
-        smokeInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_Velocity], smokeInstance.velocity, StorageManager__options_min[StorageManager.Options.Smoke_Velocity], StorageManager__options_max[StorageManager.Options.Smoke_Velocity])
+        ---@type vec3
+        local velocityDefaultValue = StorageManager__options_default[StorageManager.Options.Smoke_Velocity]
+        smokeInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_Velocity], smokeInstance.velocity, StorageManager__options_min[StorageManager.Options.Smoke_Velocity], StorageManager__options_max[StorageManager.Options.Smoke_Velocity], nil, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab, velocityDefaultValue)
         
         UIOperations_newLine(1)
 

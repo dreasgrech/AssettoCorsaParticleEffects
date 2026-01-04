@@ -30,6 +30,8 @@ local UIOperations = {}
 
 local emptyVec3 = vec3(0, 0, 0)
 
+local VEC3_SLIDERS_WIDTH = 350
+
 -- These are the window IDs as defined in the manifest.ini
 local MAIN_WINDOW_ID = 'mainWindow'
 
@@ -162,7 +164,7 @@ end
 ---@param value refnumber|number @Current slider value.
 ---@param minValue number? @Default value: 0.
 ---@param maxValue number? @Default value: 1.
----@param sliderWidth number
+---@param sliderWidth number @Width of the slider in pixels.
 ---@param labelFormat string|'%.3f'|nil @C-style format string. Default value: `'%.3f'`.
 ---@param defaultValue number @The default value to reset to on right-click and is shown in the tooltip.
 ---@return number @Possibly updated slider value.
@@ -198,28 +200,31 @@ UIOperations.renderSlider = renderSlider
 ---@param xSliderGrabColor rgbm|nil @Optional custom color for the X slider grab.
 ---@param ySliderGrabColor rgbm|nil @Optional custom color for the Y slider grab.
 ---@param zSliderGrabColor rgbm|nil @Optional custom color for the Z slider grab.
+---@param defaultValue vec3 @The default value to reset to on right-click and is shown in the tooltip.
 ---@return vec3 newValue
-UIOperations.renderVec3Sliders = function(label, value, minValue, maxValue, format, xSliderGrabColor, ySliderGrabColor, zSliderGrabColor)
+UIOperations.renderVec3Sliders = function(label, value, minValue, maxValue, format, xSliderGrabColor, ySliderGrabColor, zSliderGrabColor, defaultValue)
     ui_pushID(label)
-
 
     local xGrabColor = xSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
     ui_pushStyleColor(ui_StyleColor.SliderGrab, xGrabColor)
-    local x = renderSlider('##x', '', value.x, minValue, maxValue, 350, format or 'X: %.3f', 0)
+    local xDefaultValue = defaultValue and defaultValue.x or 0
+    local x = renderSlider('##x', '', value.x, minValue, maxValue, VEC3_SLIDERS_WIDTH, format or 'X: %.3f', xDefaultValue)
     ui_popStyleColor()
 
     --ui_sameLine()
 
     local yGrabColor = ySliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
     ui_pushStyleColor(ui_StyleColor.SliderGrab, yGrabColor)
-    local y = renderSlider('##y', '', value.y, minValue, maxValue, 350, format or 'Y: %.3f', 0)
+    local yDefaultValue = defaultValue and defaultValue.y or 0
+    local y = renderSlider('##y', '', value.y, minValue, maxValue, VEC3_SLIDERS_WIDTH, format or 'Y: %.3f', yDefaultValue)
     ui_popStyleColor()
 
     --ui_sameLine()
 
     local zGrabColor = zSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
     ui_pushStyleColor(ui_StyleColor.SliderGrab, zGrabColor)
-    local z = renderSlider('##z', '', value.z, minValue, maxValue, 350, format or 'Z: %.3f', 0)
+    local zDefaultValue = defaultValue and defaultValue.z or 0
+    local z = renderSlider('##z', '', value.z, minValue, maxValue, VEC3_SLIDERS_WIDTH, format or 'Z: %.3f', zDefaultValue)
     ui_popStyleColor()
 
     ui_popID()
@@ -241,7 +246,6 @@ UIOperations.renderCheckbox = function(label, tooltip, value, defaultValue)
     
     return value
 end
-
 
 --- Creates a disabled section in the UI.
 ---@param createSection boolean @If true, will create a disabled section.

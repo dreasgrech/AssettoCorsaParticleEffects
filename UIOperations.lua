@@ -31,7 +31,22 @@ local emptyVec3 = vec3(0, 0, 0)
 
 UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
     sliderGrab = ui_styleColor(ui_StyleColor.SliderGrab),
+    -- text = ui_styleColor(ui_StyleColor.Text), -- Andreas: for some reason, this returns black instead of white so I'm hardcoding it below
+    text = rgbm.colors.white
 }
+
+ac.log(UIOperations.DEFAULT_UI_COMPONENT_COLORS.text)
+ac.log(UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab)
+
+local setTooltip = function(tooltip)
+    if ui_itemHovered() then
+        -- render the tooltip
+        ui_pushStyleColor(ui_StyleColor.Text, UIOperations.DEFAULT_UI_COMPONENT_COLORS.text) -- make sure that the tooltip text is in default color
+        ui_setTooltip(tooltip)
+        ui_popStyleColor()
+    end
+end
+UIOperations.setTooltip = setTooltip
 
 ---Color button control. Returns true if color has changed (as usual with Lua, colors are passed)
 ---by reference so update value would be put in place of old one automatically.
@@ -42,11 +57,7 @@ UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
 ---@return rgbm
 UIOperations.renderColorPicker = function(label, tooltip, color, flags, size)
     ui_colorButton(label, color, flags, size)
-
-    if ui_itemHovered() then
-        -- render the tooltip
-        ui_setTooltip(tooltip)
-    end
+    setTooltip(tooltip)
 
     ui_sameLine()
     ui_text(label)
@@ -61,16 +72,12 @@ UIOperations.renderButton = function(label, tooltip, rightClickCallback)
     -- local clicked = ui_button(label, vec2(width, height))
     -- ui_popItemWidth()
     local clicked = ui_button(label)
+    setTooltip(tooltip)
 
     if rightClickCallback ~= nil then
         if ui_itemClicked(ui_MouseButton.Right, true) then
             rightClickCallback()
         end
-    end
-
-    if ui_itemHovered() then
-        -- render the tooltip
-        ui_setTooltip(tooltip)
     end
 
     return clicked
@@ -166,18 +173,11 @@ UIOperations.renderSlider = function(label, tooltip, value, minValue, maxValue, 
     -- reset the item width
     ui_popItemWidth()
 
-    if ui_itemHovered() then
-        -- tooltip = string_format('%s\n\nDefault: %.2f', tooltip, defaultValue)
-        tooltip = string_format('%s%sDefault: %.2f', tooltip, tooltip ~= '' and '\n\n' or '', defaultValue)
+    setTooltip(string_format('%s%sDefault: %.2f', tooltip, tooltip ~= '' and '\n\n' or '', defaultValue))
 
-        -- render the tooltip
-        ui_setTooltip(tooltip)
-
-        -- reset the slider to default value on right-click
-        if ui_mouseClicked(ui_MouseButton.Right) then
-            -- Logger.log(string.format('Resetting slider "%s" to default value: %.2f', label, defaultValue))
-            newValue = defaultValue
-        end
+    -- reset the slider to default value on right-click
+    if ui_mouseClicked(ui_MouseButton.Right) then
+        newValue = defaultValue
     end
 
     return newValue
@@ -187,13 +187,7 @@ UIOperations.renderCheckbox = function(label, tooltip, value, defaultValue)
     if ui_checkbox(label, value) then
         value = not value
     end
-    
-    if ui_itemHovered() then
-        tooltip = string_format('%s\n\nDefault: %s', tooltip, tostring(defaultValue))
-
-        -- render the tooltip
-        ui_setTooltip(tooltip)
-    end
+    setTooltip(string_format('%s\n\nDefault: %s', tooltip, tostring(defaultValue)))
     
     return value
 end

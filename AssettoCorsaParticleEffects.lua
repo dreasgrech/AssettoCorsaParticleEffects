@@ -89,10 +89,8 @@ local ui_popID = ui.popID
 local ui_text = ui.text
 local ui_textColored = ui.textColored
 local ui_nextColumn = ui.nextColumn
-local ui_button = ui.button
 local ui_alignTextToFramePadding = ui.alignTextToFramePadding
 local ui_itemHovered = ui.itemHovered
-local ui_setTooltip = ui.setTooltip
 local ui_setMouseCursor = ui.setMouseCursor
 local ui_itemClicked = ui.itemClicked
 local ui_separator = ui.separator
@@ -106,6 +104,7 @@ local UIOperations_renderVec3Sliders = UIOperations.renderVec3Sliders
 local UIOperations_renderColorPicker = UIOperations.renderColorPicker
 local UIOperations_tryGetWorldPositionFromMouseClick = UIOperations.tryGetWorldPositionFromMouseClick
 local UIOperations_createDisabledSection = UIOperations.createDisabledSection
+local UIOperations_setTooltip = UIOperations.setTooltip
 local LuaParticleEffectsCodeGenerator_generateCode = LuaParticleEffectsCodeGenerator.generateCode
 local ExtConfigCodeGenerator_generateCode = ExtConfigCodeGenerator.generateCode
 
@@ -290,6 +289,7 @@ local renderPositionSection = function(particleEffectInstance)
             buttonNormalColor, buttonHoveredColor, buttonActiveColor, buttonTextColor,
             function()
                 local buttonText = particleEffectInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
+                -- local buttonText = 'Set Position'
                 return UIOperations_renderButton(
                     buttonText, 
                     'Set the particle effect position by clicking on the track.\n\nIf the particle effect is not appearing at the exact position where you click, make sure that the Position Offset value is set to 0.\n\nThe final position saved in the ext_config.ini file is this Position value plus the Position Offset value.'
@@ -316,9 +316,8 @@ local renderFlamesSection = function()
         
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_PositionOffset])
-        if ui_itemHovered() then
-            ui_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
-        end
+        UIOperations_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = flameInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = flameInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
@@ -329,9 +328,8 @@ local renderFlamesSection = function()
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Flame_Velocity])
-        if ui_itemHovered() then
-            ui_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Flame_Velocity])
-        end
+        UIOperations_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Flame_Velocity])
+
         flameInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Flame_Velocity], flameInstance.velocity, StorageManager__options_min[StorageManager.Options.Flame_Velocity], StorageManager__options_max[StorageManager.Options.Flame_Velocity])
 
         UIOperations_newLine(1)
@@ -384,9 +382,8 @@ local renderSparksSection = function()
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_PositionOffset])
-        if ui_itemHovered() then
-            ui_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
-        end
+        UIOperations_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = sparksInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = sparksInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
@@ -397,9 +394,8 @@ local renderSparksSection = function()
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Sparks_Velocity])
-        if ui_itemHovered() then
-            ui_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Sparks_Velocity])
-        end
+        UIOperations_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Sparks_Velocity])
+
         sparksInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Sparks_Velocity], sparksInstance.velocity, StorageManager__options_min[StorageManager.Options.Sparks_Velocity], StorageManager__options_max[StorageManager.Options.Sparks_Velocity])
         
         UIOperations_newLine(1)
@@ -454,9 +450,8 @@ local renderSmokeSection = function()
 
         -- Position Offset
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_PositionOffset])
-        if ui_itemHovered() then
-            ui_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
-        end
+        UIOperations_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+
         -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
         local positionOffsetXSliderGrabColor = smokeInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
         local positionOffsetYSliderGrabColor = smokeInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
@@ -467,9 +462,8 @@ local renderSmokeSection = function()
 
         -- Velocity
         ui_text(StorageManager__options_label[StorageManager.Options.Smoke_Velocity])
-        if ui_itemHovered() then
-            ui_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Smoke_Velocity])
-        end
+        UIOperations_setTooltip(StorageManager__options_tooltip[StorageManager.Options.Smoke_Velocity])
+
         smokeInstance.velocity = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Smoke_Velocity], smokeInstance.velocity, StorageManager__options_min[StorageManager.Options.Smoke_Velocity], StorageManager__options_max[StorageManager.Options.Smoke_Velocity])
         
         UIOperations_newLine(1)
@@ -537,7 +531,7 @@ local renderCodeSection = function(extConfigFormat)
 
     if ui_itemHovered() then
         ui_setMouseCursor(ui.MouseCursor.Hand)
-        ui_setTooltip('Click to copy to clipboard')
+        UIOperations_setTooltip('Click to copy to clipboard')
     end
 
     if ui_itemClicked(ui.MouseButton.Left, true) then

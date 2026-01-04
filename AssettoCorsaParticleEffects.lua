@@ -57,7 +57,6 @@ if anyMissingCSPElements then
   showMissingCSPElementsErrorModalDialog(missingCSPElementsErrorMessage)
 end
 
-
 ---@enum ParticleEffectsType
 ParticleEffectsType = {
     Flame = 1,
@@ -150,33 +149,6 @@ local saveTrackLayoutConfigButtonTooltipText = string_format(
 if isTrackLayoutFileSameAsTrackFile then
     saveTrackLayoutConfigButtonTooltipText = string_format('%s\n\n\n%s', saveTrackLayoutConfigButtonTooltipText, ONE_LAYOUT_CONFIG_USED_TEXT)
 end
-
---[======[
----Flame emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later.
----Use `:emit(position, velocity, amount)` to actually emit flames.
----@param params {color: rgbm, size: number, temperatureMultiplier: number, flameIntensity: number}|`{color = rgbm(0.5, 0.5, 0.5, 0.5), size = 0.2, temperatureMultiplier = 1, flameIntensity = 0}` "Table with properties:\n- `color` (`rgbm`): Flame color multiplier (for red/yellow/blue adjustment use `temperatureMultiplier` instead).\n- `size` (`number`): Particles size. Default value: 0.2.\n- `temperatureMultiplier` (`number`): Temperature multipler to vary base color from red to blue. Default value: 1.\n- `flameIntensity` (`number`): Flame intensity affecting flame look and behaviour. Default value: 0."
----@return ac.Particles.Flame
-function ac.Particles.Flame(params) end
-
-
-
----Sparks emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later.
----Use `:emit(position, velocity, amount)` to actually emit sparks.
----@param params {color: rgbm, life: number, size: number, directionSpread: number, positionSpread: number}|`{color = rgbm(0.5, 0.5, 0.5, 0.5), life = 4, size = 0.2, directionSpread = 1, positionSpread = 0.2}` "Table with properties:\n- `color` (`rgbm`): Sparks color.\n- `life` (`number`): Base lifetime. Default value: 4.\n- `size` (`number`): Base size. Default value: 0.2.\n- `directionSpread` (`number`): How much sparks directions vary. Default value: 1.\n- `positionSpread` (`number`): How much sparks position vary. Default value: 0.2."
----@return ac.Particles.Sparks
-function ac.Particles.Sparks(params) end
-
-
-
----Smoke flags for emitters.
-ac.Particles.SmokeFlags = { FadeIn = 1, DisableCollisions = 256 }
-
----Smoke emitter holding specialized settings. Set settings in a table when creating an emitter and/or change them later.
----Use `:emit(position, velocity, amount)` to actually emit smoke.
----@param params {color: rgbm, colorConsistency: number, thickness: number, life: number, size: number, spreadK: number, growK: number, targetYVelocity: number}|`{color = rgbm(0.5, 0.5, 0.5, 0.5), colorConsistency = 0.5, thickness = 1, life = 4, size = 0.2, spreadK = 1, growK = 1, targetYVelocity = 0}` "Table with properties:\n- `color` (`rgbm`): Smoke color with values from 0 to 1. Alpha can be used to adjust thickness. Default alpha value: 0.5.\n- `colorConsistency` (`number`): Defines how much color dissipates when smoke expands, from 0 to 1. Default value: 0.5.\n- `thickness` (`number`): How thick is smoke, from 0 to 1. Default value: 1.\n- `life` (`number`): Smoke base lifespan in seconds. Default value: 4.\n- `size` (`number`): Starting particle size in meters. Default value: 0.2.\n- `spreadK` (`number`): How randomized is smoke spawn (mostly, speed and direction). Default value: 1.\n- `growK` (`number`): How fast smoke expands. Default value: 1.\n- `targetYVelocity` (`number`): Neutral vertical velocity. Set above zero for hot gasses and below zero for cold, to collect at the bottom. Default value: 0."
----@return ac.Particles.Smoke
-function ac.Particles.Smoke(params) end
---]======]
 
 local storage = StorageManager.getStorage()
 

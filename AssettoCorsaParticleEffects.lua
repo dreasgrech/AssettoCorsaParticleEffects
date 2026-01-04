@@ -806,34 +806,6 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     --]===]
 end
 
---[====[
------ Andreas: this is the sample code to Ilja
-local sampleFlame = ac.Particles.Flame({
-    color = rgbm(0.72156864404678,0.70980393886566,0.54117649793625,1),
-    size = 5,
-    temperatureMultiplier = 1,
-    flameIntensity = 2
-})
-local sampleFlamePosition = vec3(632.77020263672,88.856018066406,1431.8325195313)
-local sampleFlameDirection = vec3(0, 1, 0)
-local sampleFlameSpeed = 10
-local sampleFlameIntensity = 1
-local sampleFlameVelocity = sampleFlameDirection * sampleFlameSpeed
-
---[==[
-[FLAME_1]
-COLOR=0.72156864404678,0.70980393886566,0.54117649793625,1
-SIZE=5
-TEMPERATURE_MULT=1
-FLAME_INTENSITY=2
-POSITION=632.77020263672,88.856018066406,1431.8325195313
-DIRECTION=0,1,0
-SPEED=10
-INTENSITY=1
---]==]
---]====]
-
-
 ---
 -- wiki: called after a whole simulation update
 ---
@@ -849,11 +821,6 @@ function script.MANIFEST__UPDATE(dt)
     if smokeInstance.enabled then
         smoke:emit(smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
     end
-
---[====[
-    -- Andreas: sample code to Ilja
-    sampleFlame:emit(sampleFlamePosition, sampleFlameVelocity, sampleFlameIntensity)
---]====]
 end
 
 -- If this is the first time the app is running, open the main window

@@ -679,28 +679,24 @@ local renderExtConfigCodeTables = function()
 
 end
 
+local WINDOW_TEXT_APP_DESCRIPTION_COLOR = rgbm(1, 1, 1, 0.7)
+
 -- Function defined in manifest.ini
 -- wiki: function to be called each frame to draw window content
 ---
 function script.MANIFEST__FUNCTION_MAIN(dt)
-    ui_textColored('Particle Effects is a helper app for adding particle effects to tracks.', rgbm(1, 1, 1, 1))
+    ui_textColored(string_format('Particle Effects v%s is a helper app for adding particle effects to tracks.', Constants.APP_VERSION), rgbm(1, 1, 1, 1))
     UIOperations_newLine(1)
---[==[
-    ui_textColored('To add a particle effect to this track, first set a position using the button and once you are satisfied with your options, click the generated code below and paste it into the', rgbm(1, 1, 1, 0.7))
-    ui_sameLine()
-    renderOpenTrackExtConfigLink()
---]==]
 
     ui_textColored(
-    'To add a particle effect to this track, set a position using the [Set Position] button and once you are satisfied with your options, save it to the track using the Save buttons below.', rgbm(1, 1, 1, 0.7))
+    'To add a particle effect to this track, set a position using the [Set Position] button and once you are satisfied with your options, save it to the track config file using the Save buttons below.', WINDOW_TEXT_APP_DESCRIPTION_COLOR)
 
-    UIOperations_newLine(1)
-
-    -- ui_textColored('Alternatively you can save the particle effect directly to the track config files with the buttons at the bottom of the window.', rgbm(1, 1, 1, 0.7))
-    ui_textColored('Alternatively you can click on the generated ext_config code below and paste it into the ext_config.ini file manually.', rgbm(1, 1, 1, 0.7))
     -- UIOperations_newLine(1)
+
+    ui_textColored('Alternatively you can click on the generated ext_config code below and paste it into the ext_config.ini file manually.', WINDOW_TEXT_APP_DESCRIPTION_COLOR)
+    
     ui_alignTextToFramePadding() -- called to align text properly with the button
-    ui_textColored('The ext_config.ini files can be found from:', rgbm(1, 1, 1, 0.7))
+    ui_textColored('The ext_config.ini files can be found from:', WINDOW_TEXT_APP_DESCRIPTION_COLOR)
     ui_sameLine()
 
     --UIOperations_newLine(1)
@@ -730,6 +726,11 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
         -- open the file directly
         ExtConfigFileHandler.openExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout)
     end
+
+    UIOperations_newLine(1)
+
+    ui_textColored('You can also copy the lua code to generate the exact same particle effects that are created by this app by switching to the LUA tab from the code tabs at the bottom of the window.', WINDOW_TEXT_APP_DESCRIPTION_COLOR)
+    ui_textColored('The lua code can be pasted into a CSP lua app script file to generate the particle effects programmatically.', WINDOW_TEXT_APP_DESCRIPTION_COLOR)
 
     UIOperations_newLine(1)
 

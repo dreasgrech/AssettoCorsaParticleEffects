@@ -118,6 +118,14 @@ local UI_HEADER_TEXT_FONT_SIZE = 15
 local DEFAULT_SLIDER_WIDTH = 200
 local DEFAULT_SLIDER_FORMAT = '%.2f'
 
+local LUA_CODE_PANEL_FLAGS = bit.bor(
+  ui.WindowFlags.ThinScrollbar,
+  --ui.WindowFlags.AlwaysVerticalScrollbar,
+  --ui.WindowFlags.HorizontalScrollbar
+  ui.WindowFlags.AlwaysHorizontalScrollbar
+)
+local LUA_CODE_PANEL_HEIGHT = 300
+
 local openGlobalTrackConfigButtonToolTipText = string_format(
     'Open the track main config file which is applied for all layouts of this track.\n\nRight click to show the file in its directory instead.\n\n%s', 
     ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
@@ -516,6 +524,7 @@ local COLUMNS_WIDTH = 370
 
 local renderCodeSection = function(extConfigFormat)
     ui_text(extConfigFormat)
+    -- ui.textWrapped(extConfigFormat)
 
     if ui_itemHovered() then
         ui_setMouseCursor(ui.MouseCursor.Hand)
@@ -589,26 +598,32 @@ local renderLuaCodeSectionTables = function()
     ui_setColumnWidth(1, COLUMNS_WIDTH)
     ui_setColumnWidth(2, COLUMNS_WIDTH)
 
-    -- Flames ext_config.ini section
-    UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Flame, flameInstance)
-        renderCodeSection(luaCode)
+    ui.childWindow('luaCodePanel_flames', vec2(0, LUA_CODE_PANEL_HEIGHT), false, LUA_CODE_PANEL_FLAGS, function ()
+        -- Flames ext_config.ini section
+        UIOperations_createDisabledSection(not flameInstance.enabled, function()
+            local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Flame, flameInstance)
+            renderCodeSection(luaCode)
+        end)
     end)
 
     ui_nextColumn()
 
-    -- Sparks ext_config.ini section
-    UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparksInstance)
-        renderCodeSection(luaCode)
+    ui.childWindow('luaCodePanel_sparks', vec2(0, LUA_CODE_PANEL_HEIGHT), false, LUA_CODE_PANEL_FLAGS, function ()
+        -- Sparks ext_config.ini section
+        UIOperations_createDisabledSection(not sparksInstance.enabled, function()
+            local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparksInstance)
+            renderCodeSection(luaCode)
+        end)
     end)
 
     ui_nextColumn()
 
-    -- Smoke ext_config.ini section
-    UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Smoke, smokeInstance)
-        renderCodeSection(luaCode)
+    ui.childWindow('luaCodePanel_smoke', vec2(0, LUA_CODE_PANEL_HEIGHT), false, LUA_CODE_PANEL_FLAGS, function ()
+        -- Smoke ext_config.ini section
+        UIOperations_createDisabledSection(not smokeInstance.enabled, function()
+            local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Smoke, smokeInstance)
+            renderCodeSection(luaCode)
+        end)
     end)
 
     -- finish the lua_code_sections table

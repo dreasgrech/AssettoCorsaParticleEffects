@@ -157,6 +157,7 @@ StorageManager.options_tooltip = fillInDoDTables(
 optionsCollection_beforeDoD = nil  -- free memory
 
 ---@class StorageTable
+---@field appRanFirstTime boolean
 ---@field flame_enabled boolean
 ---@field flame_position vec3
 ---@field flame_positionOffset vec3
@@ -194,6 +195,8 @@ optionsCollection_beforeDoD = nil  -- free memory
 
 ---@type StorageTable
 local storageTable = {
+    appRanFirstTime = false,
+
     flame_enabled = StorageManager.options_default[StorageManager.Options.Flame_Enabled],
     flame_position = StorageManager.options_default[StorageManager.Options.Flame_Position],
     flame_positionOffset = StorageManager.options_default[StorageManager.Options.Flame_PositionOffset],

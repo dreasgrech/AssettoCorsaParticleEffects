@@ -49,6 +49,7 @@ CSPCompatibilityManager.checkForMissingCSPElements = function()
         getTableForUsedElement(function() return ac.error end, "ac.error"),
         getTableForUsedElement(function() return ac.getSim end, "ac.getSim"),
         getTableForUsedElement(function() return ac.storage end, "ac.storage"),
+        getTableForUsedElement(function() return ac.setWindowOpen end, "ac.setWindowOpen"),
     }
 
     ---@type table<TableForUsedElement>

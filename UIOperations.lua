@@ -1,4 +1,5 @@
-﻿local ui_colorButton = ui.colorButton
+﻿local ac_setWindowOpen = ac.setWindowOpen
+local ui_colorButton = ui.colorButton
 local ui_itemHovered = ui.itemHovered
 local ui_setTooltip = ui.setTooltip
 local ui_sameLine = ui.sameLine
@@ -29,6 +30,9 @@ local UIOperations = {}
 
 local emptyVec3 = vec3(0, 0, 0)
 
+-- These are the window IDs as defined in the manifest.ini
+local MAIN_WINDOW_ID = 'mainWindow'
+
 UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
     sliderGrab = ui_styleColor(ui_StyleColor.SliderGrab),
     -- text = ui_styleColor(ui_StyleColor.Text), -- Andreas: for some reason, this returns black instead of white so I'm hardcoding it below
@@ -44,6 +48,10 @@ local setTooltip = function(tooltip)
     end
 end
 UIOperations.setTooltip = setTooltip
+
+UIOperations.openMainWindow = function()
+  ac_setWindowOpen(MAIN_WINDOW_ID, true)
+end
 
 ---Color button control. Returns true if color has changed (as usual with Lua, colors are passed)
 ---by reference so update value would be put in place of old one automatically.

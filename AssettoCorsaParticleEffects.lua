@@ -856,6 +856,13 @@ function script.MANIFEST__UPDATE(dt)
 --]====]
 end
 
+-- If this is the first time the app is running, open the main window
+if not storage.appRanFirstTime then
+    ac.log('First time app run detected.  Showing app windows')
+    UIOperations.openMainWindow()
+    storage.appRanFirstTime = true
+end
+
 ---
 -- wiki: called when transparent objects are finished rendering
 ---

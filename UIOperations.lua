@@ -35,9 +35,6 @@ UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
     text = rgbm.colors.white
 }
 
-ac.log(UIOperations.DEFAULT_UI_COMPONENT_COLORS.text)
-ac.log(UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab)
-
 local setTooltip = function(tooltip)
     if ui_itemHovered() then
         -- render the tooltip

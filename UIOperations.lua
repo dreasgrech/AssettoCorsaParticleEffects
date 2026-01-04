@@ -175,15 +175,15 @@ UIOperations.renderSlider = function(label, tooltip, value, minValue, maxValue, 
     --local newValue = ui_slider(' ' .. label, value, minValue, maxValue, labelFormat)
     local newValue = ui_slider(label, value, minValue, maxValue, labelFormat)
 
+    -- reset the slider to default value on right-click
+    if ui_itemClicked(ui_MouseButton.Right) then
+        newValue = defaultValue
+    end
+
     -- reset the item width
     ui_popItemWidth()
 
     setTooltip(string_format('%s%sDefault: %.2f', tooltip, tooltip ~= '' and '\n\n' or '', defaultValue))
-
-    -- reset the slider to default value on right-click
-    if ui_mouseClicked(ui_MouseButton.Right) then
-        newValue = defaultValue
-    end
 
     return newValue
 end

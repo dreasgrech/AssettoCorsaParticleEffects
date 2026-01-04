@@ -678,6 +678,10 @@ local renderExtConfigCodeTables = function()
     end)
     ui_popID()
 
+    ui.pushStyleColor(ui.StyleColor.Text, rgbm.colors.red)
+    ui.textWrapped('Warning: As of CSP v0.3.0-preview212, there seems to be an issue with FLAME particles created in the ext_config.ini files where the SPEED key is ignored, thus making FLAME particle effects from config files appear without any velocity.  This might be fixed from CSP in the future.')
+    ui.popStyleColor()
+
     ui_nextColumn()
 
     ui_pushID("ExportSparksSection")
@@ -712,7 +716,7 @@ local WINDOW_TEXT_APP_DESCRIPTION_COLOR = rgbm(1, 1, 1, 0.7)
 -- wiki: function to be called each frame to draw window content
 ---
 function script.MANIFEST__FUNCTION_MAIN(dt)
-    ui_textColored(string_format('Particle Effects v%s is a helper app for adding particle effects to tracks.', Constants.APP_VERSION), rgbm(1, 1, 1, 1))
+    ui_textColored(string_format('Particle Effects v%s by dreasgrech is a helper app for adding particle effects to tracks.', Constants.APP_VERSION), rgbm(1, 1, 1, 1))
     UIOperations_newLine(1)
 
     ui_textColored(

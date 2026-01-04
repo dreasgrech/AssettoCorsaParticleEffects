@@ -872,10 +872,3 @@ file:set(nextSectionName, 'POSITION', vec3(0, 0, 0))
 --file:save(currentTrackLayoutFile)
 ac.log('Saved ext_config.ini with new FLAME section at: ' .. tostring(currentTrackLayoutFile))
 --]==]
-
---[==[
-ExtConfigFileHandler.writeNewSectionToExtConfigFile(ExtConfigFileHandler.ExtConfigFileTypes.TrackLayout, 'FLAME', function(file, fullSectionName)
-    file:set(fullSectionName, 'POSITION', vec3(0, 0, 0))
-    ac.log('Wrote POSITION to section: ' .. tostring(fullSectionName))
-end)
---]==]

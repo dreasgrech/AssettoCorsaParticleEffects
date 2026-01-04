@@ -289,7 +289,6 @@ local renderPositionSection = function(particleEffectInstance)
             buttonNormalColor, buttonHoveredColor, buttonActiveColor, buttonTextColor,
             function()
                 local buttonText = particleEffectInstance.waitingForClickToSetPosition and 'Click in the world' or 'Set Position'
-                -- local buttonText = 'Set Position'
                 return UIOperations_renderButton(
                     buttonText, 
                     'Set the particle effect position by clicking on the track.\n\nIf the particle effect is not appearing at the exact position where you click, make sure that the Position Offset value is set to 0.\n\nThe final position saved in the ext_config.ini file is this Position value plus the Position Offset value.'
@@ -539,36 +538,6 @@ local renderCodeSection = function(extConfigFormat)
         ac_setMessage('Copied', 'Copied to clipboard', nil, 5.0)
     end
 end
-
--- TODO: most of this stuff has moved to ExtConfigFileHandler.lua - refactor this to use that module properly
--- local EXTENSION_PATH = '/extension/'
--- local EXT_CONFIG_FILENAME = 'ext_config.ini'
--- local EXT_CONFIG_RELATIVE_PATH = EXTENSION_PATH .. EXT_CONFIG_FILENAME
-
---[===[
-local function renderOpenTrackExtConfigLink()
-  local trackLayoutFolder = ac.getFolder(ac.FolderID.CurrentTrackLayout)
-  if not trackLayoutFolder or trackLayoutFolder == '' then
-    ui.text(EXT_CONFIG_FILENAME)
-    return
-  end
-
-  local extConfigPath = trackLayoutFolder .. EXT_CONFIG_RELATIVE_PATH
-
-  if ui.textHyperlink(EXT_CONFIG_FILENAME) then
-    if io.fileExists(extConfigPath) then
-      ac.log(os.findAssociatedExecutable(extConfigPath))
-      os.openTextFile(extConfigPath, 0)
-    else
-      os.showInExplorer(trackLayoutFolder .. EXTENSION_PATH)
-    end
-  end
-
-  if ui_itemHovered() then
-    ui_setMouseCursor(ui.MouseCursor.Hand)
-  end
-end
---]===]
 
 ---@param particleEffectsType ParticleEffectsType
 ---@param particleEffectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper

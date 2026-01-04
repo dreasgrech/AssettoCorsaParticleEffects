@@ -1,5 +1,4 @@
-﻿local ui = ui
-local ui_colorButton = ui.colorButton
+﻿local ui_colorButton = ui.colorButton
 local ui_itemHovered = ui.itemHovered
 local ui_setTooltip = ui.setTooltip
 local ui_sameLine = ui.sameLine
@@ -7,7 +6,6 @@ local ui_text = ui.text
 local ui_pushItemWidth = ui.pushItemWidth
 local ui_popItemWidth = ui.popItemWidth
 local ui_slider = ui.slider
-local ui_mouseClicked = ui.mouseClicked
 local ui_MouseButton = ui.MouseButton
 local ui_pushID = ui.pushID
 local ui_popID = ui.popID
@@ -15,13 +13,24 @@ local ui_pushDisabled = ui.pushDisabled
 local ui_popDisabled = ui.popDisabled
 local ui_checkbox = ui.checkbox
 local ui_newLine = ui.newLine
+local ui_button = ui.button
+local ui_itemClicked = ui.itemClicked
+local ui_pushStyleColor = ui.pushStyleColor
+local ui_popStyleColor = ui.popStyleColor
+local ui_styleColor = ui.styleColor
+local ui_StyleColor = ui.StyleColor
+local ui_mouseBusy = ui.mouseBusy
+local ui_mouseClicked = ui.mouseClicked
 local string_format = string.format
-local render = render
+local render_isPositioningHelperBusy = render.isPositioningHelperBusy
+local render_createMouseRay = render.createMouseRay
 
 local UIOperations = {}
 
+local emptyVec3 = vec3(0, 0, 0)
+
 UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
-    sliderGrab = ui.styleColor(ui.StyleColor.SliderGrab),
+    sliderGrab = ui_styleColor(ui_StyleColor.SliderGrab),
 }
 
 ---Color button control. Returns true if color has changed (as usual with Lua, colors are passed)
@@ -49,12 +58,12 @@ end
 -- UIOperations.renderButton = function(label, tooltip, width, height)
 UIOperations.renderButton = function(label, tooltip, rightClickCallback)
     -- ui_pushItemWidth(width)
-    -- local clicked = ui.button(label, vec2(width, height))
+    -- local clicked = ui_button(label, vec2(width, height))
     -- ui_popItemWidth()
-    local clicked = ui.button(label)
+    local clicked = ui_button(label)
 
     if rightClickCallback ~= nil then
-        if ui.itemClicked(ui.MouseButton.Right, true) then
+        if ui_itemClicked(ui_MouseButton.Right, true) then
             rightClickCallback()
         end
     end
@@ -87,33 +96,31 @@ end
 ---@param renderButtonCallback function @A callback function which should render the button and return whether it was clicked.
 ---@return boolean @Whether the button was clicked.
 UIOperations.renderColorButton = function(backColor, backHoveredColor, backActiveColor, textColor, renderButtonCallback)
-  ui.pushStyleColor(ui.StyleColor.Button, backColor)
-  ui.pushStyleColor(ui.StyleColor.ButtonHovered, backHoveredColor)
-  ui.pushStyleColor(ui.StyleColor.ButtonActive, backActiveColor)
-  ui.pushStyleColor(ui.StyleColor.Text, textColor)
+  ui_pushStyleColor(ui_StyleColor.Button, backColor)
+  ui_pushStyleColor(ui_StyleColor.ButtonHovered, backHoveredColor)
+  ui_pushStyleColor(ui_StyleColor.ButtonActive, backActiveColor)
+  ui_pushStyleColor(ui_StyleColor.Text, textColor)
 
   -- render the button
   local buttonResult = renderButtonCallback()
 
-  ui.popStyleColor(4) -- 4 styles
+  ui_popStyleColor(4) -- 4 styles
 
   return buttonResult
 end
-
-local emptyVec3 = vec3(0, 0, 0)
 
 ---Tries to get world position from mouse click.
 ---@return boolean hit @Whether a valid world position was found.
 ---@return vec3 out_worldPosition @The world position if hit is true.
 UIOperations.tryGetWorldPositionFromMouseClick = function()
     -- Avoid conflicts if you’re using CSP’s gizmo/positioning helper
-    if render.isPositioningHelperBusy() then return false, emptyVec3 end
+    if render_isPositioningHelperBusy() then return false, emptyVec3 end
 
     -- Only act on a left-click (and avoid UI clicks)
-    if ui.mouseBusy() then return false, emptyVec3 end
-    if not ui.mouseClicked(ui.MouseButton.Left) then return false, emptyVec3 end
+    if ui_mouseBusy() then return false, emptyVec3 end
+    if not ui_mouseClicked(ui.MouseButton.Left) then return false, emptyVec3 end
 
-    local ray = render.createMouseRay()
+    local ray = render_createMouseRay()
 
     -- Option A: intersect visual track mesh
     local hitDistance = ray:track(1)
@@ -206,23 +213,23 @@ UIOperations.renderVec3Sliders = function(label, value, minValue, maxValue, form
 
 
     local xGrabColor = xSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
-    ui.pushStyleColor(ui.StyleColor.SliderGrab, xGrabColor)
+    ui_pushStyleColor(ui_StyleColor.SliderGrab, xGrabColor)
     local x = UIOperations.renderSlider('##x', '', value.x, minValue, maxValue, 350, format or 'X: %.3f', 0)
-    ui.popStyleColor()
+    ui_popStyleColor()
 
     --ui_sameLine()
 
     local yGrabColor = ySliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
-    ui.pushStyleColor(ui.StyleColor.SliderGrab, yGrabColor)
+    ui_pushStyleColor(ui_StyleColor.SliderGrab, yGrabColor)
     local y = UIOperations.renderSlider('##y', '', value.y, minValue, maxValue, 350, format or 'Y: %.3f', 0)
-    ui.popStyleColor()
+    ui_popStyleColor()
 
     --ui_sameLine()
 
     local zGrabColor = zSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
-    ui.pushStyleColor(ui.StyleColor.SliderGrab, zGrabColor)
+    ui_pushStyleColor(ui_StyleColor.SliderGrab, zGrabColor)
     local z = UIOperations.renderSlider('##z', '', value.z, minValue, maxValue, 350, format or 'Z: %.3f', 0)
-    ui.popStyleColor()
+    ui_popStyleColor()
 
     ui_popID()
 

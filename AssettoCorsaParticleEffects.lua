@@ -1,3 +1,63 @@
+Constants = require("Constants")
+CSPCompatibilityManager = require("CSPCompatibilityManager")
+
+local cspVersion = CSPCompatibilityManager.getCSPVersion()
+ac.log(string.format("Launching %s v%s.  Custom Shaders Patch: %s",Constants.APP_NAME, Constants.APP_VERSION, cspVersion))
+
+local showMissingCSPElementsErrorModalDialog = function(message)
+  local neededFunctionsForModalDialogAvailable =
+    ui.modalDialog ~= nil or
+    ui.textWrapped ~= nil or
+    ui.newLine ~= nil or
+    ui.button ~= nil or
+    ac.setClipboardText ~= nil or
+    ui.sameLine ~= nil
+
+    if not neededFunctionsForModalDialogAvailable then
+      ac.error(string.format("Cannot show error dialog because some required CSP elements are missing.\nError text: %s", message))
+      return
+    end
+
+  ui.modalDialog(string.format('[Error] Missing CSP elements needed to run the %s app', Constants.APP_NAME), function()
+    ui.textColored(message, rgbm(1, 0, 0, 1))
+    ui.newLine()
+    if ui.modernButton('Copy', vec2(110, 40)) then
+      ac.setClipboardText(message) 
+    end
+    ui.sameLine()
+    if ui.modernButton('Close', vec2(120, 40)) then
+      return true
+    end
+
+    return false
+  end, true)
+end
+
+-- Check if any CSP elements used by the app are missing
+local missingCSPElements = CSPCompatibilityManager.checkForMissingCSPElements()
+local anyMissingCSPElements = (#missingCSPElements > 0)
+local missingCSPElementsErrorMessage
+
+-- Show an error modal dialog if any CSP elements are missing
+if anyMissingCSPElements then
+  -- Build the CSP missing elements error message
+  missingCSPElementsErrorMessage = string.format("%s may not run as expected because some required Custom Shaders Patch elements are missing.", Constants.APP_NAME)
+  missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\n\nThe following CSP elements are needed by the app:\n"
+  for _, elementName in ipairs(missingCSPElements) do
+      missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. " - " .. elementName .. "\n"
+  end
+  missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\nSee the CSP log in \"\\Documents\\Assetto Corsa\\logs\\custom_shaders_patch.log\" for more details."
+  missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\n\nTo fix the issue, please make sure you're on the latest version of Custom Shaders Patch (https://www.patreon.com/c/x4fab/posts)"
+  missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. string.format("\n\nYour CSP version is %s", cspVersion)
+
+  -- Log the error to the CSP log as well
+  ac.error(missingCSPElementsErrorMessage)
+
+  -- Show the error modal dialog
+  showMissingCSPElementsErrorModalDialog(missingCSPElementsErrorMessage)
+end
+
+
 ---@enum ParticleEffectsType
 ParticleEffectsType = {
     Flame = 1,
@@ -17,13 +77,9 @@ ParticleEffectsExtConfigFileHandler = require("ParticleEffectsExtConfigFileHandl
 LuaParticleEffectsCodeGenerator = require("LuaParticleEffectsCodeGenerator")
 
 -- local bindings
-local bit = bit
 local bit_bor = bit.bor
-local ac = ac
-local ac_getSim = ac.getSim
 local ac_setClipboardText = ac.setClipboardText
 local ac_setMessage = ac.setMessage
-local ui = ui
 local ui_columns = ui.columns
 local ui_setColumnWidth = ui.setColumnWidth
 local ui_dwriteText = ui.dwriteText
@@ -50,6 +106,8 @@ local UIOperations_renderVec3Sliders = UIOperations.renderVec3Sliders
 local UIOperations_renderColorPicker = UIOperations.renderColorPicker
 local UIOperations_tryGetWorldPositionFromMouseClick = UIOperations.tryGetWorldPositionFromMouseClick
 local UIOperations_createDisabledSection = UIOperations.createDisabledSection
+local LuaParticleEffectsCodeGenerator_generateCode = LuaParticleEffectsCodeGenerator.generateCode
+local ExtConfigCodeGenerator_generateCode = ExtConfigCodeGenerator.generateCode
 
 local UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab = UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
 
@@ -524,8 +582,7 @@ local renderLuaCodeSectionTables = function()
 
     -- Flames ext_config.ini section
     UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        -- local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
-        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Flame, flameInstance)
+        local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Flame, flameInstance)
         renderCodeSection(luaCode)
     end)
 
@@ -533,8 +590,7 @@ local renderLuaCodeSectionTables = function()
 
     -- Sparks ext_config.ini section
     UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        -- local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
-        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparksInstance)
+        local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparksInstance)
         renderCodeSection(luaCode)
     end)
 
@@ -542,8 +598,7 @@ local renderLuaCodeSectionTables = function()
 
     -- Smoke ext_config.ini section
     UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        -- local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
-        local luaCode = LuaParticleEffectsCodeGenerator.generateCode(ParticleEffectsType.Smoke, smokeInstance)
+        local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Smoke, smokeInstance)
         renderCodeSection(luaCode)
     end)
 
@@ -560,7 +615,7 @@ local renderExtConfigCodeTables = function()
 
     -- Flames ext_config.ini section
     UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        local flameExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        local flameExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
         renderCodeSection(flameExtConfigFormat)
     end)
     
@@ -568,7 +623,7 @@ local renderExtConfigCodeTables = function()
     
     -- Sparks ext_config.ini section
     UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        local sparksExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        local sparksExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
         renderCodeSection(sparksExtConfigFormat)
     end)
     
@@ -576,7 +631,7 @@ local renderExtConfigCodeTables = function()
     
     -- Smoke ext_config.ini section
     UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        local smokeExtConfigFormat = ExtConfigCodeGenerator.generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        local smokeExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
         renderCodeSection(smokeExtConfigFormat)
     end)
     

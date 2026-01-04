@@ -98,7 +98,7 @@ local optionsCollection_beforeDoD = {
     { name = StorageManager.Options.Flame_PositionOffset, default=vec3(0,0,0), min=POSITION_OFFSET_MIN, max=POSITION_OFFSET_MAX, label='Position Offset', tooltip='Offset in position from the base position.' },
     { name = StorageManager.Options.Flame_Velocity, default=vec3(0,1,0), min=-100, max=100, label='Velocity', tooltip='The velocity applied to the flames' },
     { name = StorageManager.Options.Flame_Color, default=rgbm(0.5, 0.5, 0.5, 0.5), min=nil, max=nil, label='Color', tooltip='Flame color multiplier.\n\nFor red/yellow/blue adjustment use `Temperature Multiplier` instead.' },
-    { name = StorageManager.Options.Flame_Size, default=0.2, min=0, max=50, label='Size', tooltip='Particles size.' },
+    { name = StorageManager.Options.Flame_Size, default=1, min=0, max=50, label='Size', tooltip='Particles size.' },
     { name = StorageManager.Options.Flame_TemperatureMultiplier, default=1.0, min=0, max=10, label='Temperature Multiplier', tooltip='Temperature multipler to vary base color from red to blue.' },
     { name = StorageManager.Options.Flame_FlameIntensity, default=0.0, min=0, max=10, label='Flame Intensity', tooltip='Flame intensity affecting flame look and behaviour.' },
     { name = StorageManager.Options.Flame_Amount, default=1, min=0, max=5, label='Amount', tooltip='The amount of particles emitted.' }, -- max=5 value from conversation with Ilya

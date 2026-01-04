@@ -10,11 +10,9 @@ Particle Effects is a helper app for adding particle effects to tracks in Assett
 > As of CSP v0.3.0-preview212, there seems to be an issue with FLAME particles created in the `ext_config.ini` files where the `SPEED` key is ignored, thus making FLAME particle effects from config files appear without any velocity.  This might be fixed from CSP in the future.
 > _Generating the particle effects using lua code is unaffected and works as expected._
 
+## Media
+
 https://github.com/user-attachments/assets/1ade9215-0faf-4e94-992c-a702cebf241a
-
-<br/>
-
-To try out the work-in-progress version, create a directory called `AssettoCorsaParticleEffects` at `Steam\steamapps\common\assettocorsa\apps\lua\AssettoCorsaParticleEffects` and copy all the files there (you can skip the `lib` directory)
 
 <img width="2560" height="1440" alt="AssettoCorsaParticleEffects_README md at main · dreasgrech_AssettoCorsaParticleEffects - Brave 1_4_2026 7_42_03 PM" src="https://github.com/user-attachments/assets/dcb77662-2aff-427f-a95c-c4fcd55b896c" />
 
@@ -23,6 +21,37 @@ Auto-generated `ext_config.ini` format:
 
 Auto-generated Lua code:
 <img width="1152" height="342" alt="image" src="https://github.com/user-attachments/assets/e8244fc7-e657-468f-93ed-e41fab2e0e00" />
+<br/>
+
+## Installation
+The app requires <a href="https://acstuff.club/patch/" target="_blank">Custom Shaders Patch</a> (CSP) extension installed.
+
+> [!NOTE]
+> The recommended Custom Shaders Patch version as of 04/01/26 is <a href="https://www.patreon.com/posts/merry-christmas-146659505" target="_blank">CSP v0.3.0-preview212</a>.
+
+
+### Stable
+Download the zip file from the Releases page: https://github.com/dreasgrech/AssettoCorsaParticleEffects/releases
+
+> [!WARNING]
+> When upgrading from an existing version of AssettoCorsaParticleEffects, make sure to first delete the `AssettoCorsaParticleEffects` app directory before copying the new one.
+
+Copy the `AssettoCorsaParticleEffects` directory to `\steamapps\common\assettocorsa\apps\lua\`
+
+### Cutting Edge
+If you want to install the app directly using the latest source code, you can download the entire repository and put all files in: `\steamapps\common\assettocorsa\apps\lua\AssettoCorsaParticleEffects\`
+
+> [!WARNING]
+> *There's no guarantee everything will work as expected when using the cutting edge "nightly" code here since I am constantly committing in untested code when I'm working on the app.*
+
+<br><br>
+You should end up with this file structure once the files are copied:
+<img width="882" height="618" alt="image" src="https://github.com/user-attachments/assets/c4c50a31-30b9-4c7e-b0f6-fa3c1cdffa41" />
+
+
+
+
+
 
 
 

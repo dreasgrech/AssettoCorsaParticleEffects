@@ -166,7 +166,7 @@ end
 ---@param labelFormat string|'%.3f'|nil @C-style format string. Default value: `'%.3f'`.
 ---@param defaultValue number @The default value to reset to on right-click and is shown in the tooltip.
 ---@return number @Possibly updated slider value.
-UIOperations.renderSlider = function(label, tooltip, value, minValue, maxValue, sliderWidth, labelFormat, defaultValue)
+local renderSlider = function(label, tooltip, value, minValue, maxValue, sliderWidth, labelFormat, defaultValue)
     -- set the width of the slider
     ui_pushItemWidth(sliderWidth)
 
@@ -187,15 +187,7 @@ UIOperations.renderSlider = function(label, tooltip, value, minValue, maxValue, 
 
     return newValue
 end
-
-UIOperations.renderCheckbox = function(label, tooltip, value, defaultValue)
-    if ui_checkbox(label, value) then
-        value = not value
-    end
-    setTooltip(string_format('%s\n\nDefault: %s', tooltip, tostring(defaultValue)))
-    
-    return value
-end
+UIOperations.renderSlider = renderSlider
 
 ---Renders vec3 sliders
 ---@param label string @Slider label.
@@ -213,27 +205,43 @@ UIOperations.renderVec3Sliders = function(label, value, minValue, maxValue, form
 
     local xGrabColor = xSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
     ui_pushStyleColor(ui_StyleColor.SliderGrab, xGrabColor)
-    local x = UIOperations.renderSlider('##x', '', value.x, minValue, maxValue, 350, format or 'X: %.3f', 0)
+    local x = renderSlider('##x', '', value.x, minValue, maxValue, 350, format or 'X: %.3f', 0)
     ui_popStyleColor()
 
     --ui_sameLine()
 
     local yGrabColor = ySliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
     ui_pushStyleColor(ui_StyleColor.SliderGrab, yGrabColor)
-    local y = UIOperations.renderSlider('##y', '', value.y, minValue, maxValue, 350, format or 'Y: %.3f', 0)
+    local y = renderSlider('##y', '', value.y, minValue, maxValue, 350, format or 'Y: %.3f', 0)
     ui_popStyleColor()
 
     --ui_sameLine()
 
     local zGrabColor = zSliderGrabColor or UIOperations.DEFAULT_UI_COMPONENT_COLORS.sliderGrab
     ui_pushStyleColor(ui_StyleColor.SliderGrab, zGrabColor)
-    local z = UIOperations.renderSlider('##z', '', value.z, minValue, maxValue, 350, format or 'Z: %.3f', 0)
+    local z = renderSlider('##z', '', value.z, minValue, maxValue, 350, format or 'Z: %.3f', 0)
     ui_popStyleColor()
 
     ui_popID()
 
     return vec3(x, y, z)
 end
+
+---Renders a checkbox with a tooltip
+---@param label string
+---@param tooltip string @Tooltip text.
+---@param value boolean @Current checkbox value.
+---@param defaultValue boolean @The default value to show in the tooltip.
+---@return boolean @Possibly updated checkbox value.
+UIOperations.renderCheckbox = function(label, tooltip, value, defaultValue)
+    if ui_checkbox(label, value) then
+        value = not value
+    end
+    setTooltip(string_format('%s\n\nDefault: %s', tooltip, tostring(defaultValue)))
+    
+    return value
+end
+
 
 --- Creates a disabled section in the UI.
 ---@param createSection boolean @If true, will create a disabled section.

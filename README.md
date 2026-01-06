@@ -1,5 +1,8 @@
 # Assetto Corsa Particle Effects
 Particle Effects is a helper app for adding particle effects to tracks in Assetto Corsa.
+<p align="center">
+    <img width="500" alt="image" src="https://github.com/user-attachments/assets/02abaafb-cd0b-433a-9646-6bfd01c12c59" />
+</p>
 
 * All exposed CSP particle effects fields are available in the app to experiment with.
 * Supports saving the particle effects directly to either the track global `ext_config.ini` file or the track layout-specific `ext_config.ini`.

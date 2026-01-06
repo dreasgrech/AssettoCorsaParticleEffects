@@ -150,3 +150,61 @@ TARGET_Y_VELOCITY = 0.00
 ```
 
 Although the `ext_config.ini` format shown in the app is shown as `[FLAME_...]`, when the format is saved to the config file, it's changed to `[FLAME_n+1]` where `n` is the largest `[FLAME_n]` in the config (ex: `[FLAME_1]`, `[FLAME_2]`, `[FLAME_3]` etc...), so that there aren't conflicts between the particle effects.
+
+### Lua code
+Alternative to the `ext_config.ini` format, the app also outputs lua code that would be needed to emit the particle effects shown in the app.
+```lua
+-- Create the flame effect
+local flame = ac.Particles.Flame({
+	color = rgbm(0.665, 0.346, 0.117, 0.500),
+	size = 2.36,
+	temperatureMultiplier = 3.10,
+	flameIntensity = 1.25,
+})
+
+-- Emit the flame effect in an update loop
+function script.update()
+	-- emit(position, velocity, amount)
+	flame:emit(vec3(-30.789, -0.032, -10.404), vec3(0.000, 1.198, 0.000), 1.550)
+end
+```
+```lua
+-- Create the sparks effect
+local sparks = ac.Particles.Sparks({
+	color = rgbm(0.078, 0.684, 0.757, 0.500),
+	size = 5.90,
+	life = 6.17,
+	directionSpread = 0.11,
+	positionSpread = 0.11,
+})
+
+-- Emit the sparks effect in an update loop
+function script.update()
+	-- emit(position, velocity, amount)
+	sparks:emit(vec3(-26.761, 6.603, 10.188), vec3(0.000, 42.545, 0.000), 1.630)
+end
+```
+```lua
+-- Create the smoke effect
+local smoke = ac.Particles.Smoke({
+	color = rgbm(0.463, 0.463, 0.463, 0.500),
+	size = 0.20,
+	life = 4.00,
+	colorConsistency = 0.15,
+	thickness = 1.00,
+	spreadK = 1.00,
+	growK = 1.00,
+	targetYVelocity = 0.00,
+})
+
+smoke.flags = bit.bor(smoke.flags, ac.Particles.SmokeFlags.DisableCollisions)
+smoke.flags = bit.bor(smoke.flags, ac.Particles.SmokeFlags.FadeIn)
+
+-- Emit the smoke effect in an update loop
+function script.update()
+	-- emit(position, velocity, amount)
+	smoke:emit(vec3(121.579, 0.219, 17.086), vec3(0.000, 7.587, 0.000), 0.560)
+end
+```
+
+The code the app outputs can be used in an Assetto Corsa lua app to generate and emit the particle effects programmatically, which would allow you much better control of the effects.

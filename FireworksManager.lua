@@ -2,7 +2,7 @@
 ---Author: dreasgrech
 local FireworksManager = {}
 
--- import the CSP fireworks library
+-- import the CSP fireworks library: \assettocorsa\extension\internal\lua-shared\sim\fireworks.lua
 local fireworks = require('shared/sim/fireworks')
 
 local nextFireworksIndex = 1

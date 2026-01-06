@@ -212,3 +212,5 @@ end
 
 
 The code the app outputs can be used in an Assetto Corsa lua app to generate and emit the particle effects programmatically, which would allow you much better control of the effects.
+
+Here's how you can get started with writing lua apps: https://github.com/CheesyManiac/cheesy-lua/wiki/Getting-Started-with-CSP-Lua-Scripting

@@ -149,6 +149,8 @@ THICKNESS = 1.00
 TARGET_Y_VELOCITY = 0.00
 ```
 
+<img width="1166" height="263" alt="image" src="https://github.com/user-attachments/assets/b38f3073-66f8-4dc8-8341-ecc4ee653248" />
+
 Although the `ext_config.ini` format shown in the app is shown as `[FLAME_...]`, when the format is saved to the config file, it's changed to `[FLAME_n+1]` where `n` is the largest `[FLAME_n]` in the config (ex: `[FLAME_1]`, `[FLAME_2]`, `[FLAME_3]` etc...), so that there aren't conflicts between the particle effects.
 
 ### Lua code
@@ -206,5 +208,7 @@ function script.update()
 	smoke:emit(vec3(121.579, 0.219, 17.086), vec3(0.000, 7.587, 0.000), 0.560)
 end
 ```
+<img width="1162" height="284" alt="image" src="https://github.com/user-attachments/assets/29b879b3-a080-42f3-9d3a-d4bc8ba23cf0" />
+
 
 The code the app outputs can be used in an Assetto Corsa lua app to generate and emit the particle effects programmatically, which would allow you much better control of the effects.

@@ -58,20 +58,31 @@ The following are all the available particle effects and their respective tweaka
 
 **Position**: The base position of the flames effect.<br/>
 **Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
-**Velocity**: The velocity applied to the flame effects.<br/>
+**Velocity**: The velocity applied to the flame effect.<br/>
 **Color**: Flame color multiplier.  For red/yellow/blue adjustment use **_Temperature Multiplier_** instead.<br/>
 **Size**: The size of the flame particles.<br/>
 **Temperature multiplier**: Temperature multipler to vary base color from red to blue.<br/>
 **Flame intensity**: Flame intensity affecting flame look and behaviour.<br/>
-**Amount**: The amount of particles emitted.<br/>
+**Amount**: The amount of particles emitted for the flame effect.<br/>
 
 <br clear="left"/>
 
-
 ### Sparks
-<img width="370" height="512" alt="image" src="https://github.com/user-attachments/assets/1b0b8b4c-197e-428e-a2e8-29ae9bdbe755" />
+<img width="370" height="512" alt="image" align="left" src="https://github.com/user-attachments/assets/1b0b8b4c-197e-428e-a2e8-29ae9bdbe755" />
+
+**Position**: The base position of the sparks effect.<br/>
+**Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**Velocity**: The velocity applied to the sparks effect.<br/>
+**Color**: The color of the sparks effect.<br/>
+**Life**: The base lifetime of the sparks effect.<br/>
+**Size**: The base size of the sparks effect.<br/>
+**Direction Spread**: How much sparks directions vary.<br/>
+**Position Spread**: How much sparks positions vary.<br/>
+**Amount**: The amount of particles emitted for the sparks effect.<br/>
+
+<br clear="left"/>
 
 ### Smoke
-<img width="370" height="654" alt="image" src="https://github.com/user-attachments/assets/03bd2a83-6ba1-4da6-b0a1-f5ab10fc7f07" />
+<img width="370" height="654" alt="image" align="left" src="https://github.com/user-attachments/assets/03bd2a83-6ba1-4da6-b0a1-f5ab10fc7f07" />
 
-
+<br clear="left"/>

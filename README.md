@@ -56,49 +56,50 @@ The following are all the available particle effects and their respective tweaka
 ### Flames
 <img width="371" height="487" alt="image" align="left" src="https://github.com/user-attachments/assets/46a1c0eb-8259-4148-a461-4aa6cda4e2ac" />
 
-**Position**: The base position of the flames effect.<br/>
-**Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
-**Velocity**: The velocity applied to the flame effect.<br/>
-**Color**: Flame color multiplier.  For red/yellow/blue adjustment use **_Temperature Multiplier_** instead.<br/>
-**Size**: The size of the flame particles.<br/>
-**Temperature multiplier**: Temperature multipler to vary base color from red to blue.<br/>
-**Flame intensity**: Flame intensity affecting flame look and behaviour.<br/>
-**Amount**: The amount of particles emitted for the flame effect.<br/>
+**`Position`**: The base position of the flames effect.<br/>
+**`Position Offset`**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**`Velocity`**: The velocity applied to the flame effect.<br/>
+**`Color`**: Flame color multiplier.  For red/yellow/blue adjustment use **`Temperature Multiplier`** instead.<br/>
+**`Size`**: The size of the flame particles.<br/>
+**`Temperature multiplier`**: Temperature multipler to vary base color from red to blue.<br/>
+**`Flame intensity`**: Flame intensity affecting flame look and behaviour.<br/>
+**`Amount`**: The amount of particles emitted for the flame effect.<br/>
 
 <br clear="left"/>
 
 ### Sparks
 <img width="370" height="512" alt="image" align="left" src="https://github.com/user-attachments/assets/1b0b8b4c-197e-428e-a2e8-29ae9bdbe755" />
 
-**Position**: The base position of the sparks effect.<br/>
-**Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
-**Velocity**: The velocity applied to the sparks effect.<br/>
-**Color**: The color of the sparks effect.<br/>
-**Life**: The base lifetime of the sparks effect.<br/>
-**Size**: The base size of the sparks effect.<br/>
-**Direction Spread**: How much sparks directions vary.<br/>
-**Position Spread**: How much sparks positions vary.<br/>
-**Amount**: The amount of particles emitted for the sparks effect.<br/>
+**`Position`**: The base position of the sparks effect.<br/>
+**`Position Offset`**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**`Velocity`**: The velocity applied to the sparks effect.<br/>
+**`Color`**: The color of the sparks effect.<br/>
+**`Life`**: The base lifetime of the sparks effect.<br/>
+**`Size`**: The base size of the sparks effect.<br/>
+**`Direction Spread`**: How much sparks directions vary.<br/>
+**`Position Spread`**: How much sparks positions vary.<br/>
+**`Amount`**: The amount of particles emitted for the sparks effect.<br/>
 
 <br clear="left"/>
 
 ### Smoke
 <img width="370" height="654" alt="image" align="left" src="https://github.com/user-attachments/assets/03bd2a83-6ba1-4da6-b0a1-f5ab10fc7f07" />
 
-**Position**: The base position of the smoke effect.<br/>
-**Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
-**Velocity**: The velocity applied to the smoke effect.<br/>
-**Color**: The color of the sparks effect.  Smoke color with values from 0 to 1. Alpha can be used to adjust thickness.<br/>
-**Color Consistency**: Defines how much color dissipates when smoke expands, from 0 to 1.<br/>
-**Thickness**: How thick the smoke is, from 0 to 1.<br/>
-**Life**: The base lifetime of the sparks effect.<br/>
-**Size**: The starting particle size in meters.<br/>
-**Spread K**: Controls how randomized the smoke spawn is (primarily affecting speed and direction), from 0 to 10.<br/>
-**Grow K**: Controls how quickly the smoke expands over time, from 0 to 10.<br/>
-**Target Y Velocity**: Neutral vertical velocity target. Set above 0 for hot gases (smoke tends to rise) and below 0 for cold gases (smoke tends to settle), from -100 to 100.<br/>
-**Amount**: The number of particles emitted, from 0 to 5.<br/>
-**Disable Collisions**: Disables smoke collisions with the environment.  Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
-**Fade In**: Enables a fade-in effect for smoke. Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+**`Position`**: The base position of the smoke effect.<br/>
+**`Position Offset`**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**`Velocity`**: The velocity applied to the smoke effect.<br/>
+**`Color`**: The color of the sparks effect.  Smoke color with values from 0 to 1. Alpha can be used to adjust thickness.<br/>
+**`Color Consistency`**: Defines how much color dissipates when smoke expands, from 0 to 1.<br/>
+**`Thickness`**: How thick the smoke is, from 0 to 1.<br/>
+**`Life`**: The base lifetime of the sparks effect.<br/>
+**`Size`**: The starting particle size in meters.<br/>
+**`Spread K`**: Controls how randomized the smoke spawn is (primarily affecting speed and direction), from 0 to 10.<br/>
+**`Grow K`**: Controls how quickly the smoke expands over time, from 0 to 10.<br/>
+**`Target Y Velocity`**: Neutral vertical velocity target. Set above 0 for hot gases (smoke tends to rise) and below 0 for cold gases (smoke tends to settle), from -100 to 100.<br/>
+**`Amount`**: The number of particles emitted, from 0 to 5.<br/>
+**`Disable Collisions`**: Disables smoke collisions with the environment.  Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+**`Fade In`**: Enables a fade-in effect for smoke. Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+
 
 
 <br clear="left"/>

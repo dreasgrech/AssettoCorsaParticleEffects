@@ -85,4 +85,20 @@ The following are all the available particle effects and their respective tweaka
 ### Smoke
 <img width="370" height="654" alt="image" align="left" src="https://github.com/user-attachments/assets/03bd2a83-6ba1-4da6-b0a1-f5ab10fc7f07" />
 
+**Position**: The base position of the smoke effect.<br/>
+**Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**Velocity**: The velocity applied to the smoke effect.<br/>
+**Color**: The color of the sparks effect.  Smoke color with values from 0 to 1. Alpha can be used to adjust thickness.<br/>
+**Color Consistency**: Defines how much color dissipates when smoke expands, from 0 to 1.<br/>
+**Thickness**: How thick the smoke is, from 0 to 1.<br/>
+**Life**: The base lifetime of the sparks effect.<br/>
+**Size**: The starting particle size in meters.<br/>
+**Spread K**: Controls how randomized the smoke spawn is (primarily affecting speed and direction), from 0 to 10.<br/>
+**Grow K**: Controls how quickly the smoke expands over time, from 0 to 10.<br/>
+**Target Y Velocity**: Neutral vertical velocity target. Set above 0 for hot gases (smoke tends to rise) and below 0 for cold gases (smoke tends to settle), from -100 to 100.<br/>
+**Amount**: The number of particles emitted, from 0 to 5.<br/>
+**Disable Collisions**: Disables smoke collisions with the environment.  Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+**Fade In**: Enables a fade-in effect for smoke. Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+
+
 <br clear="left"/>

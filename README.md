@@ -51,13 +51,170 @@ If you want to install the app directly using the latest source code, you can do
 You should end up with this file structure once the files are copied:
 <img width="882" height="618" alt="image" src="https://github.com/user-attachments/assets/c4c50a31-30b9-4c7e-b0f6-fa3c1cdffa41" />
 
+## Available Effects
+The following are all the available particle effects and their respective tweakable values that are exposed from CSP.
+### Flames
+<img width="371" height="487" alt="image" align="left" src="https://github.com/user-attachments/assets/46a1c0eb-8259-4148-a461-4aa6cda4e2ac" />
+
+**`Position`**: The base position of the flames effect.<br/>
+**`Position Offset`**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**`Velocity`**: The velocity applied to the flame effect.<br/>
+**`Color`**: Flame color multiplier.  For red/yellow/blue adjustment use **`Temperature Multiplier`** instead.<br/>
+**`Size`**: The size of the flame particles.<br/>
+**`Temperature multiplier`**: Temperature multipler to vary base color from red to blue.<br/>
+**`Flame intensity`**: Flame intensity affecting flame look and behaviour.<br/>
+**`Amount`**: The amount of particles emitted for the flame effect.<br/>
+
+<br clear="left"/>
+
+### Sparks
+<img width="370" height="512" alt="image" align="left" src="https://github.com/user-attachments/assets/1b0b8b4c-197e-428e-a2e8-29ae9bdbe755" />
+
+**`Position`**: The base position of the sparks effect.<br/>
+**`Position Offset`**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**`Velocity`**: The velocity applied to the sparks effect.<br/>
+**`Color`**: The color of the sparks effect.<br/>
+**`Life`**: The base lifetime of the sparks effect.<br/>
+**`Size`**: The base size of the sparks effect.<br/>
+**`Direction Spread`**: How much sparks directions vary.<br/>
+**`Position Spread`**: How much sparks positions vary.<br/>
+**`Amount`**: The amount of particles emitted for the sparks effect.<br/>
+
+<br clear="left"/>
+
+### Smoke
+<img width="370" height="654" alt="image" align="left" src="https://github.com/user-attachments/assets/03bd2a83-6ba1-4da6-b0a1-f5ab10fc7f07" />
+
+**`Position`**: The base position of the smoke effect.<br/>
+**`Position Offset`**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**`Velocity`**: The velocity applied to the smoke effect.<br/>
+**`Color`**: The color of the sparks effect.  Smoke color with values from 0 to 1. Alpha can be used to adjust thickness.<br/>
+**`Color Consistency`**: Defines how much color dissipates when smoke expands, from 0 to 1.<br/>
+**`Thickness`**: How thick the smoke is, from 0 to 1.<br/>
+**`Life`**: The base lifetime of the sparks effect.<br/>
+**`Size`**: The starting particle size in meters.<br/>
+**`Spread K`**: Controls how randomized the smoke spawn is (primarily affecting speed and direction), from 0 to 10.<br/>
+**`Grow K`**: Controls how quickly the smoke expands over time, from 0 to 10.<br/>
+**`Target Y Velocity`**: Neutral vertical velocity target. Set above 0 for hot gases (smoke tends to rise) and below 0 for cold gases (smoke tends to settle), from -100 to 100.<br/>
+**`Amount`**: The number of particles emitted, from 0 to 5.<br/>
+**`Disable Collisions`**: Disables smoke collisions with the environment.  Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+**`Fade In`**: Enables a fade-in effect for smoke. Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
+
+<br clear="left"/>
+
+## Code Generation
+The app outputs both `ext_config.ini` format and also lua code, either which can be used to generate the particle effects shown in the app.
+> [!WARNING]
+> Internally, CSP has different pipelines for the particle effects generated from `ext_config.ini` and ones from lua code.  This means that when using the `ext_config.ini` format, the particle effects might look different from the ones generated in lua code.
+> This can be fixed in the future from CSP where eventually all particle effects generated from `ext_config.ini` and ones from lua code emit the exact same way.
+
+### ext_config.ini format
+The app generates the `ext_config.ini` format in the following ways:
+```ini
+[FLAME_1]
+POSITION = -30.79, -0.03, -10.40
+DIRECTION = 0.00, 1.00, 0.00
+SPEED = 1.20
+INTENSITY = 1.55
+COLOR = 0.66, 0.35, 0.12, 0.50
+SIZE = 2.36
+TEMPERATURE_MULT = 3.10
+FLAME_INTENSITY = 1.25
+```
+```ini
+[SPARKS_1]
+POSITION = -26.76, 6.60, 10.19
+DIRECTION = 0.00, 1.00, 0.00
+SPEED = 42.54
+INTENSITY = 1.63
+COLOR = 0.08, 0.68, 0.76, 0.50
+SIZE = 5.90
+LIFE = 6.17
+SPREAD_DIR = 0.11
+SPREAD_POS = 0.11
+```
+```ini
+[SMOKE_1]
+POSITION = 121.58, 0.22, 17.09
+DIRECTION = 0.00, 1.00, 0.00
+SPEED = 7.59
+INTENSITY = 0.56
+COLOR = 0.46, 0.46, 0.46, 0.50
+SIZE = 0.20
+LIFE = 4.00
+COLOR_CONSISTENCY = 0.15
+SPREAD = 1.00
+GROW = 1.00
+THICKNESS = 1.00
+TARGET_Y_VELOCITY = 0.00
+```
+
+<img width="1166" height="263" alt="image" src="https://github.com/user-attachments/assets/b38f3073-66f8-4dc8-8341-ecc4ee653248" />
+
+Although the `ext_config.ini` format shown in the app is shown as `[FLAME_...]`, when the format is saved to the config file, it's changed to `[FLAME_n+1]` where `n` is the largest `[FLAME_n]` in the config (ex: `[FLAME_1]`, `[FLAME_2]`, `[FLAME_3]` etc...), so that there aren't conflicts between the particle effects.
+
+### Lua code
+Alternative to the `ext_config.ini` format, the app also outputs lua code that would be needed to emit the particle effects shown in the app.
+```lua
+-- Create the flame effect
+local flame = ac.Particles.Flame({
+	color = rgbm(0.665, 0.346, 0.117, 0.500),
+	size = 2.36,
+	temperatureMultiplier = 3.10,
+	flameIntensity = 1.25,
+})
+
+-- Emit the flame effect in an update loop
+function script.update()
+	-- emit(position, velocity, amount)
+	flame:emit(vec3(-30.789, -0.032, -10.404), vec3(0.000, 1.198, 0.000), 1.550)
+end
+```
+```lua
+-- Create the sparks effect
+local sparks = ac.Particles.Sparks({
+	color = rgbm(0.078, 0.684, 0.757, 0.500),
+	size = 5.90,
+	life = 6.17,
+	directionSpread = 0.11,
+	positionSpread = 0.11,
+})
+
+-- Emit the sparks effect in an update loop
+function script.update()
+	-- emit(position, velocity, amount)
+	sparks:emit(vec3(-26.761, 6.603, 10.188), vec3(0.000, 42.545, 0.000), 1.630)
+end
+```
+```lua
+-- Create the smoke effect
+local smoke = ac.Particles.Smoke({
+	color = rgbm(0.463, 0.463, 0.463, 0.500),
+	size = 0.20,
+	life = 4.00,
+	colorConsistency = 0.15,
+	thickness = 1.00,
+	spreadK = 1.00,
+	growK = 1.00,
+	targetYVelocity = 0.00,
+})
+
+smoke.flags = bit.bor(smoke.flags, ac.Particles.SmokeFlags.DisableCollisions)
+smoke.flags = bit.bor(smoke.flags, ac.Particles.SmokeFlags.FadeIn)
+
+-- Emit the smoke effect in an update loop
+function script.update()
+	-- emit(position, velocity, amount)
+	smoke:emit(vec3(121.579, 0.219, 17.086), vec3(0.000, 7.587, 0.000), 0.560)
+end
+```
+<img width="1162" height="284" alt="image" src="https://github.com/user-attachments/assets/29b879b3-a080-42f3-9d3a-d4bc8ba23cf0" />
 
 
+The code the app outputs can be used in an Assetto Corsa lua app to generate and emit the particle effects programmatically, which would allow you much better control of the effects.
 
+Here's how you can get started with writing lua apps: https://github.com/CheesyManiac/cheesy-lua/wiki/Getting-Started-with-CSP-Lua-Scripting
 
-
-
-
-
-
-
+## Planned work
+* Some way of viewing and removing existing particle effects that are defined in config from the app itself.
+* Setting positions for fireworks (thanks [@leBluem](https://github.com/leBluem) for the idea) in the app, and triggering fireworks from the app to test the positions.

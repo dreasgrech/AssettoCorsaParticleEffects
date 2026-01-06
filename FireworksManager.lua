@@ -2,6 +2,7 @@
 ---Author: dreasgrech
 local FireworksManager = {}
 
+-- import the CSP fireworks library
 local fireworks = require('shared/sim/fireworks')
 
 local nextFireworksIndex = 1

@@ -59,7 +59,7 @@ The following are all the available particle effects and their respective tweaka
 **Position**: The base position of the flames effect.<br/>
 **Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
 **Velocity**: The velocity applied to the flame effects.<br/>
-**Color**: Flame color multiplier.  For red/yellow/blue adjustment use **Temperature Multiplier** instead.
+**Color**: Flame color multiplier.  For red/yellow/blue adjustment use **_Temperature Multiplier_** instead.<br/>
 **Size**: The size of the flame particles.<br/>
 **Temperature multiplier**: Temperature multipler to vary base color from red to blue.<br/>
 **Flame intensity**: Flame intensity affecting flame look and behaviour.<br/>

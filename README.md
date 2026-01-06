@@ -51,13 +51,27 @@ If you want to install the app directly using the latest source code, you can do
 You should end up with this file structure once the files are copied:
 <img width="882" height="618" alt="image" src="https://github.com/user-attachments/assets/c4c50a31-30b9-4c7e-b0f6-fa3c1cdffa41" />
 
+## Available Effects
+The following are all the available particle effects and their respective tweakable values that are exposed from CSP.
+### Flames
+<img width="371" height="487" alt="image" align="left" src="https://github.com/user-attachments/assets/46a1c0eb-8259-4148-a461-4aa6cda4e2ac" />
+
+**Position**: The base position of the flames effect.<br/>
+**Position Offset**: Offset in position from the base position; useful for finetuning the final position.<br/>
+**Velocity**: The velocity applied to the flame effects.<br/>
+**Color**: Flame color multiplier.  For red/yellow/blue adjustment use **Temperature Multiplier** instead.
+**Size**: The size of the flame particles.<br/>
+**Temperature multiplier**: Temperature multipler to vary base color from red to blue.<br/>
+**Flame intensity**: Flame intensity affecting flame look and behaviour.<br/>
+**Amount**: The amount of particles emitted.<br/>
+
+<br clear="left"/>
 
 
+### Sparks
+<img width="370" height="512" alt="image" src="https://github.com/user-attachments/assets/1b0b8b4c-197e-428e-a2e8-29ae9bdbe755" />
 
-
-
-
-
-
+### Smoke
+<img width="370" height="654" alt="image" src="https://github.com/user-attachments/assets/03bd2a83-6ba1-4da6-b0a1-f5ab10fc7f07" />
 
 

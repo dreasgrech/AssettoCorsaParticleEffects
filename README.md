@@ -100,6 +100,53 @@ The following are all the available particle effects and their respective tweaka
 **`Disable Collisions`**: Disables smoke collisions with the environment.  Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
 **`Fade In`**: Enables a fade-in effect for smoke. Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.<br/>
 
-
-
 <br clear="left"/>
+
+## Code Generation
+The app outputs both `ext_config.ini` format and also lua code, either which can be used to generate the particle effects shown in the app.
+> [!WARNING]
+> Internally, CSP has different pipelines for the particle effects generated from `ext_config.ini` and ones from lua code.  This means that when using the `ext_config.ini` format, the particle effects might look different from the ones generated in lua code.
+> This can be fixed in the future from CSP where eventually all particle effects generated from `ext_config.ini` and ones from lua code emit the exact same way.
+
+### ext_config.ini format
+The app generates the `ext_config.ini` format in the following ways:
+```ini
+[FLAME_1]
+POSITION = -30.79, -0.03, -10.40
+DIRECTION = 0.00, 1.00, 0.00
+SPEED = 1.20
+INTENSITY = 1.55
+COLOR = 0.66, 0.35, 0.12, 0.50
+SIZE = 2.36
+TEMPERATURE_MULT = 3.10
+FLAME_INTENSITY = 1.25
+```
+```ini
+[SPARKS_1]
+POSITION = -26.76, 6.60, 10.19
+DIRECTION = 0.00, 1.00, 0.00
+SPEED = 42.54
+INTENSITY = 1.63
+COLOR = 0.08, 0.68, 0.76, 0.50
+SIZE = 5.90
+LIFE = 6.17
+SPREAD_DIR = 0.11
+SPREAD_POS = 0.11
+```
+```ini
+[SMOKE_1]
+POSITION = 121.58, 0.22, 17.09
+DIRECTION = 0.00, 1.00, 0.00
+SPEED = 7.59
+INTENSITY = 0.56
+COLOR = 0.46, 0.46, 0.46, 0.50
+SIZE = 0.20
+LIFE = 4.00
+COLOR_CONSISTENCY = 0.15
+SPREAD = 1.00
+GROW = 1.00
+THICKNESS = 1.00
+TARGET_Y_VELOCITY = 0.00
+```
+
+Although the `ext_config.ini` format shown in the app is shown as `[FLAME_...]`, when the format is saved to the config file, it's changed to `[FLAME_n+1]` where `n` is the largest `[FLAME_n]` in the config (ex: `[FLAME_1]`, `[FLAME_2]`, `[FLAME_3]` etc...), so that there aren't conflicts between the particle effects.

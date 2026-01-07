@@ -1,6 +1,6 @@
 ﻿local ParticleEffectsManager = {}
 
----@class FlameEffectWrapper
+---@class BaseEffectWrapper
 ---@field enabled boolean
 ---@field position vec3
 ---@field positionOffset vec3
@@ -8,26 +8,14 @@
 ---@field amount number
 ---@field waitingForClickToSetPosition boolean
 ---@field getFinalPosition fun():vec3
+
+---@class FlameEffectWrapper : BaseEffectWrapper
 ---@field effect ac.Particles.Flame
 
----@class SparksEffectWrapper
----@field enabled boolean
----@field position vec3
----@field positionOffset vec3
----@field velocity vec3
----@field amount number
----@field waitingForClickToSetPosition boolean
----@field getFinalPosition fun():vec3
+---@class SparksEffectWrapper : BaseEffectWrapper
 ---@field effect ac.Particles.Sparks
 
----@class SmokeEffectWrapper
----@field enabled boolean
----@field position vec3
----@field positionOffset vec3
----@field velocity vec3
----@field amount number
----@field waitingForClickToSetPosition boolean
----@field getFinalPosition fun():vec3
+---@class SmokeEffectWrapper : BaseEffectWrapper
 ---@field effect ac.Particles.Smoke
 ---@field disableCollisions boolean
 ---@field fadeIn boolean
@@ -113,6 +101,11 @@ local generators = {
         return instance
     end
 }
+
+-- ---@return BaseEffectWrapper
+-- ---@overload fun(effectType: ParticleEffectsType.Flame): FlameEffectWrapper
+-- ---@overload fun(effectType: ParticleEffectsType.Sparks): SparksEffectWrapper
+-- ---@overload fun(effectType: ParticleEffectsType.Smoke): SmokeEffectWrapper
 
 ---@param effectType ParticleEffectsType
 ---@return FlameEffectWrapper|SmokeEffectWrapper|SparksEffectWrapper

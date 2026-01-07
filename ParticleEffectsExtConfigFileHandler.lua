@@ -93,7 +93,6 @@ local writers = {
     [ParticleEffectsType.Fireworks] = function (file, fullSectionName, effectInstance)
         -- Since the fireworks values write under the same [PARTICLES_FX] header, we shouldn't use the numbered header
         local sectionName = SectionPrefixes[ParticleEffectsType.Fireworks]
-        -- sectionName = string.format('%s_...', sectionName)
 
         local position = effectInstance.getFinalPosition()
 

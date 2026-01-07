@@ -6,7 +6,7 @@ local StringBuilder_clear = StringBuilder.clear
 local StringBuilder_append = StringBuilder.append
 local StringBuilder_toString = StringBuilder.toString
 
-local variableInstanceNames = {
+local particleEffectsLuaVariableInstanceNames = {
     [ParticleEffectsType.Flame] = "flame",
     [ParticleEffectsType.Sparks] = "sparks",
     [ParticleEffectsType.Smoke] = "smoke",
@@ -18,43 +18,18 @@ local particleEffectLuaTypes = {
     [ParticleEffectsType.Smoke] = "ac.Particles.Smoke",
 }
 
-local generators = {
-    ---@param effect ac.Particles.Flame
-    [ParticleEffectsType.Flame] = function (effect)
-        StringBuilder_append(string.format("\ttemperatureMultiplier = %.2f,", effect.temperatureMultiplier))
-        StringBuilder_append(string.format("\tflameIntensity = %.2f,", effect.flameIntensity))
-    end,
-
-    ---@param effect ac.Particles.Sparks
-    [ParticleEffectsType.Sparks] = function (effect)
-        StringBuilder_append(string.format("\tlife = %.2f,", effect.life))
-        StringBuilder_append(string.format("\tdirectionSpread = %.2f,", effect.directionSpread))
-        StringBuilder_append(string.format("\tpositionSpread = %.2f,", effect.positionSpread))
-    end,
-
-    ---@param effect ac.Particles.Smoke
-    [ParticleEffectsType.Smoke] = function (effect)
-        StringBuilder_append(string.format("\tlife = %.2f,", effect.life))
-        StringBuilder_append(string.format("\tcolorConsistency = %.2f,", effect.colorConsistency))
-        StringBuilder_append(string.format("\tthickness = %.2f,", effect.thickness))
-        StringBuilder_append(string.format("\tspreadK = %.2f,", effect.spreadK))
-        StringBuilder_append(string.format("\tgrowK = %.2f,", effect.growK))
-        StringBuilder_append(string.format("\ttargetYVelocity = %.2f,", effect.targetYVelocity))
-    end,
-}
-
 local generators_extraUnderInitialization = {
-    ---@param effectWrapper SmokeEffectWrapper
-    [ParticleEffectsType.Smoke] = function (effectWrapper)
-        local variableInstanceName = variableInstanceNames[ParticleEffectsType.Smoke]
+    ---@param effectInstance SmokeEffectWrapper
+    [ParticleEffectsType.Smoke] = function (effectInstance)
+        local variableInstanceName = particleEffectsLuaVariableInstanceNames[ParticleEffectsType.Smoke]
 
         local flagsWritten = false
-        if effectWrapper.disableCollisions then
+        if effectInstance.disableCollisions then
             StringBuilder_append(string.format("%s.flags = bit.bor(%s.flags, ac.Particles.SmokeFlags.DisableCollisions)", variableInstanceName, variableInstanceName))
             flagsWritten = true
         end
 
-        if effectWrapper.fadeIn then
+        if effectInstance.fadeIn then
             StringBuilder_append(string.format("%s.flags = bit.bor(%s.flags, ac.Particles.SmokeFlags.FadeIn)", variableInstanceName, variableInstanceName))
             flagsWritten = true
         end
@@ -65,26 +40,16 @@ local generators_extraUnderInitialization = {
     end,
 }
 
---- Generate lua code for the given particle effect
----@param effectType ParticleEffectsType
----@param effectWrapper FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
----@return string
-LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectWrapper)
-    local effect = effectWrapper.effect
-    local position = effectWrapper.getFinalPosition()
-    local velocity = effectWrapper.velocity
-    local amount = effectWrapper.amount
+local generateParticleEffectsLua = function(effectType, effectInstance, effectFieldsCallback)
+    local effect = effectInstance.effect
 
-    StringBuilder_clear()
-
-    local variableInstanceName = variableInstanceNames[effectType]
+    local variableInstanceName = particleEffectsLuaVariableInstanceNames[effectType]
     StringBuilder_append(string.format("-- Create the %s effect", variableInstanceName))
     StringBuilder_append(string.format("local %s = %s({", variableInstanceName, particleEffectLuaTypes[effectType]))
     StringBuilder_append(string.format("\tcolor = rgbm(%.3f, %.3f, %.3f, %.3f),", effect.color.r, effect.color.g, effect.color.b, effect.color.mult))
     StringBuilder_append(string.format("\tsize = %.2f,", effect.size))
 
-    -- add the effect-specific fields
-    generators[effectType](effect)
+    effectFieldsCallback()
 
     StringBuilder_append("})")
 
@@ -93,14 +58,94 @@ LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectWrappe
     -- check if this effect type has extra code to add under initialization
     local extraCodeUnderInitializationGenerator = generators_extraUnderInitialization[effectType]
     if extraCodeUnderInitializationGenerator ~= nil then
-        extraCodeUnderInitializationGenerator(effectWrapper)
+        extraCodeUnderInitializationGenerator(effectInstance)
     end
+
+    local variableInstanceName = particleEffectsLuaVariableInstanceNames[effectType]
+
+    local position = effectInstance.getFinalPosition()
+    local velocity = effectInstance.velocity
+    local amount = effectInstance.amount
 
     StringBuilder_append(string.format("-- Emit the %s effect in an update loop", variableInstanceName))
     StringBuilder_append('function script.update()')
     StringBuilder_append('\t-- emit(position, velocity, amount)')
     StringBuilder_append(string.format("\t%s:emit(vec3(%.3f, %.3f, %.3f), vec3(%.3f, %.3f, %.3f), %.3f)", variableInstanceName, position.x, position.y, position.z, velocity.x, velocity.y, velocity.z, amount))
     StringBuilder_append('end')
+end
+
+local generators = {
+    ---@param effectInstance FlameEffectWrapper
+    [ParticleEffectsType.Flame] = function (effectInstance)
+        generateParticleEffectsLua(ParticleEffectsType.Flame, effectInstance, function()
+            local effect = effectInstance.effect
+            StringBuilder_append(string.format("\ttemperatureMultiplier = %.2f,", effect.temperatureMultiplier))
+            StringBuilder_append(string.format("\tflameIntensity = %.2f,", effect.flameIntensity))
+        end)
+    end,
+    ---@param effectInstance SparksEffectWrapper
+    [ParticleEffectsType.Sparks] = function (effectInstance)
+        generateParticleEffectsLua(ParticleEffectsType.Sparks, effectInstance, function()
+            local effect = effectInstance.effect
+            StringBuilder_append(string.format("\tlife = %.2f,", effect.life))
+            StringBuilder_append(string.format("\tdirectionSpread = %.2f,", effect.directionSpread))
+            StringBuilder_append(string.format("\tpositionSpread = %.2f,", effect.positionSpread))
+        end)
+    end,
+    ---@param effectInstance SmokeEffectWrapper
+    [ParticleEffectsType.Smoke] = function (effectInstance)
+        generateParticleEffectsLua(ParticleEffectsType.Smoke, effectInstance, function()
+            local effect = effectInstance.effect
+            StringBuilder_append(string.format("\tlife = %.2f,", effect.life))
+            StringBuilder_append(string.format("\tcolorConsistency = %.2f,", effect.colorConsistency))
+            StringBuilder_append(string.format("\tthickness = %.2f,", effect.thickness))
+            StringBuilder_append(string.format("\tspreadK = %.2f,", effect.spreadK))
+            StringBuilder_append(string.format("\tgrowK = %.2f,", effect.growK))
+            StringBuilder_append(string.format("\ttargetYVelocity = %.2f,", effect.targetYVelocity))
+        end)
+    end,
+    ---@param effectInstance FireworksWrapper
+    [ParticleEffectsType.Fireworks] = function (effectInstance)
+            local position = effectInstance.getFinalPosition()
+            local intensity = effectInstance.intensity
+            local holidayType = effectInstance.holidayType
+
+            StringBuilder_append("-- import the fireworks api: \\assettocorsa\\extension\\internal\\lua-shared\\sim\\fireworks.lua")
+            StringBuilder_append("local fireworks = require('shared/sim/fireworks')")
+            StringBuilder_append("")
+            StringBuilder_append("-- start the fireworks")
+            StringBuilder_append(string.format("local fireworksEmitter = fireworks.Emitter(vec3(%.3f, %.3f, %.3f), %.3f, %d)", position.x, position.y, position.z, intensity, holidayType))
+            StringBuilder_append("")
+            StringBuilder_append("-- stop the fireworks")
+            StringBuilder_append("fireworksEmitter:dispose()")
+    end
+}
+
+--- Generate lua code for the given particle effect
+---@param effectType ParticleEffectsType
+---@param effectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper|FireworksWrapper
+---@return string
+LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectInstance)
+    -- local effect = effectInstance.effect
+    -- local position = effectInstance.getFinalPosition()
+    -- local velocity = effectInstance.velocity
+    -- local amount = effectInstance.amount
+
+    StringBuilder_clear()
+
+    -- local variableInstanceName = variableInstanceNames[effectType]
+    -- StringBuilder_append(string.format("-- Create the %s effect", variableInstanceName))
+    -- StringBuilder_append(string.format("local %s = %s({", variableInstanceName, particleEffectLuaTypes[effectType]))
+    -- StringBuilder_append(string.format("\tcolor = rgbm(%.3f, %.3f, %.3f, %.3f),", effect.color.r, effect.color.g, effect.color.b, effect.color.mult))
+    -- StringBuilder_append(string.format("\tsize = %.2f,", effect.size))
+
+    -- generateParticleEffectsLua_PreEffectSpecificFields(effectType, effectInstance)
+
+    -- add the effect-specific fields
+    -- generators[effectType](effect)
+    generators[effectType](effectInstance)
+
+    -- generateParticleEffectsLua_PostEffectSpecificFields(effectType, effectInstance)
 
     return StringBuilder_toString()
 end

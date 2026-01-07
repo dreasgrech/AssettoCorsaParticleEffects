@@ -205,6 +205,14 @@ smoke.life = storage.smoke_life
 smoke.spreadK = storage.smoke_spreadK
 smoke.growK = storage.smoke_growK
 smoke.targetYVelocity = storage.smoke_targetYVelocity
+local smokeFlags = 0
+if storage.smoke_disableCollisions then
+    smokeFlags = bit_bor(smokeFlags, ac.Particles.SmokeFlags.DisableCollisions)
+end
+if storage.smoke_fadeIn  then
+    smokeFlags = bit_bor(smokeFlags, ac.Particles.SmokeFlags.FadeIn)
+end
+smoke.flags = smokeFlags
 
 local fireworksInstance = ParticleEffectsManager.generateParticleEffect(ParticleEffectsType.Fireworks)
 ---@cast fireworksInstance FireworksWrapper
@@ -564,7 +572,7 @@ local renderExportButtons = function(particleEffectsType, particleEffectInstance
     end
 end
 
-local renderLuaCodeSectionTables = function()
+local renderParticleEffectsLuaCodeSectionTables = function()
     ui_columns(3, true, "lua_code_sections")
     ui_setColumnWidth(0, COLUMNS_WIDTH)
     ui_setColumnWidth(1, COLUMNS_WIDTH)
@@ -697,6 +705,16 @@ local renderFireworksExtConfigCodeTables = function()
     ui_popID()
 end
 
+local renderFireworksLuaCodeSectionTables = function()
+    ui.childWindow('luaCodePanel_flames', vec2(0, LUA_CODE_PANEL_HEIGHT), false, LUA_CODE_PANEL_FLAGS, function ()
+        -- Flames ext_config.ini section
+        UIOperations_createDisabledSection(not fireworksInstance.enabled, function()
+            local luaCode = LuaParticleEffectsCodeGenerator_generateCode(ParticleEffectsType.Fireworks, fireworksInstance)
+            renderCodeSection(luaCode)
+        end)
+    end)
+end
+
 local renderMainSection_ParticleEffects = function()
     ui_pushID('MainSection_ParticleEffects')
 
@@ -727,7 +745,7 @@ local renderMainSection_ParticleEffects = function()
 
     ui.tabBar('CodeSectionsTabBar', function ()
         ui.tabItem('ext_config.ini', renderParticleEffectsExtConfigCodeTables)
-        ui.tabItem('LUA', renderLuaCodeSectionTables)
+        ui.tabItem('LUA', renderParticleEffectsLuaCodeSectionTables)
     end)
 
     ui_popID()
@@ -813,9 +831,11 @@ local renderMainSection_Fireworks = function()
     storage.fireworks_intensity = fireworksInstance.intensity
     storage.fireworks_holidayType = fireworksInstance.holidayType
 
+    UIOperations_newLine(1)
+
     ui.tabBar('FireworksCodeSectionsTabBar', function ()
         ui.tabItem('ext_config.ini', renderFireworksExtConfigCodeTables)
-        -- ui.tabItem('LUA', renderLuaCodeSectionTables)
+        ui.tabItem('LUA', renderFireworksLuaCodeSectionTables)
     end)
 
     ui_popID()

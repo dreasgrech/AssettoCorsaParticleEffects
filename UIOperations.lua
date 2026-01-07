@@ -34,6 +34,7 @@ local VEC3_SLIDERS_WIDTH = 350
 
 -- These are the window IDs as defined in the manifest.ini
 local MAIN_WINDOW_ID = 'mainWindow'
+local FIREWORKS_WINDOW_ID = 'fireworksWindow'
 
 UIOperations.DEFAULT_UI_COMPONENT_COLORS = {
     sliderGrab = ui_styleColor(ui_StyleColor.SliderGrab),
@@ -53,6 +54,10 @@ UIOperations.setTooltip = setTooltip
 
 UIOperations.openMainWindow = function()
   ac_setWindowOpen(MAIN_WINDOW_ID, true)
+end
+
+UIOperations.openFireworksWindow = function()
+  ac_setWindowOpen(FIREWORKS_WINDOW_ID, true)
 end
 
 ---Color button control. Returns true if color has changed (as usual with Lua, colors are passed)

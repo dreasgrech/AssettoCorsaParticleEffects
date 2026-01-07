@@ -74,6 +74,7 @@ ExtConfigCodeGenerator = require('ExtConfigCodeGenerator')
 ExtConfigFileHandler = require('ExtConfigFileHandler')
 ParticleEffectsExtConfigFileHandler = require("ParticleEffectsExtConfigFileHandler")
 LuaParticleEffectsCodeGenerator = require("LuaParticleEffectsCodeGenerator")
+FireworksManager = require("FireworksManager")
 
 -- local bindings
 local bit_bor = bit.bor
@@ -124,6 +125,8 @@ local LUA_CODE_PANEL_FLAGS = bit.bor(
 )
 local LUA_CODE_PANEL_HEIGHT = 300
 
+local WINDOW_TEXT_APP_DESCRIPTION_COLOR = rgbm(1, 1, 1, 0.7)
+
 local openGlobalTrackConfigButtonToolTipText = string_format(
     'Open the track main config file which is applied for all layouts of this track.\n\nRight click to show the file in its directory instead.\n\n%s', 
     ExtConfigFileHandler.getFilePath(ExtConfigFileHandler.ExtConfigFileTypes.Track)
@@ -158,8 +161,8 @@ local colorPickerFlags = bit_bor(
 )
 local colorPickerSize = vec2(DEFAULT_SLIDER_WIDTH, 20)
 
----@type FlameEffectWrapper
 local flameInstance = ParticleEffectsManager.generateParticleEffect(ParticleEffectsType.Flame)
+---@cast flameInstance FlameEffectWrapper
 flameInstance.enabled = storage.flame_enabled
 flameInstance.position = storage.flame_position
 flameInstance.positionOffset = storage.flame_positionOffset
@@ -171,8 +174,8 @@ flame.size = storage.flame_size
 flame.temperatureMultiplier = storage.flame_temperatureMultiplier
 flame.flameIntensity = storage.flame_flameIntensity
 
----@type SparksEffectWrapper
 local sparksInstance = ParticleEffectsManager.generateParticleEffect(ParticleEffectsType.Sparks)
+---@cast sparksInstance SparksEffectWrapper
 sparksInstance.enabled = storage.sparks_enabled
 sparksInstance.position = storage.sparks_position
 sparksInstance.positionOffset = storage.sparks_positionOffset
@@ -185,8 +188,8 @@ sparks.life = storage.sparks_life
 sparks.directionSpread = storage.sparks_directionSpread
 sparks.positionSpread = storage.sparks_positionSpread
 
----@type SmokeEffectWrapper
 local smokeInstance = ParticleEffectsManager.generateParticleEffect(ParticleEffectsType.Smoke)
+---@cast smokeInstance SmokeEffectWrapper
 smokeInstance.enabled = storage.smoke_enabled
 smokeInstance.position = storage.smoke_position
 smokeInstance.positionOffset = storage.smoke_positionOffset
@@ -660,10 +663,78 @@ local renderExtConfigCodeTables = function()
     ui_textColored('Note: CSP treats particle effects generated from the lua API (such as the ones generated and shown in this app) independently from particle effects defined in ext_config.ini.', rgbm(1, 1, 0, 1))
     ui_textColored('This means that you might not always get the exact same results when the particle effects are saved to the track config files.', rgbm(1, 1, 0, 1))
     --UIOperations_newLine(1)
-
 end
 
-local WINDOW_TEXT_APP_DESCRIPTION_COLOR = rgbm(1, 1, 1, 0.7)
+local renderMainSection_ParticleEffects = function()
+    ui_pushID('MainSection_ParticleEffects')
+
+    ui_columns(3, true, "sections")
+    ui_setColumnWidth(0, COLUMNS_WIDTH)
+    ui_setColumnWidth(1, COLUMNS_WIDTH)
+    ui_setColumnWidth(2, COLUMNS_WIDTH)
+
+    -- Flames section
+    renderFlamesSection()
+    
+    ui_nextColumn()
+
+    -- Sparks section
+    renderSparksSection()
+    
+    ui_nextColumn()
+    
+    -- Smoke section
+    renderSmokeSection()
+    
+    -- finish the sections table
+    ui_columns(1, false)
+
+    UIOperations_newLine(1)
+    
+    --ui_separator()
+
+    ui.tabBar('CodeSectionsTabBar', function ()
+        ui.tabItem('ext_config.ini', renderExtConfigCodeTables)
+        ui.tabItem('LUA', renderLuaCodeSectionTables)
+    end)
+
+    ui_popID()
+end
+
+local renderMainSection_Fireworks = function()
+    ui_pushID('MainSection_ParticleEffects')
+
+    ui_dwriteText('Fireworks', UI_HEADER_TEXT_FONT_SIZE)
+    UIOperations_newLine(1)
+
+    if UIOperations_renderButton('Start Fireworks', '', nil) then
+        local playerCar = ac.getCar(0)
+        local fireworksIndex = FireworksManager.startFireworks(
+            playerCar.position + vec3(0, 10, 0), 
+            1.0, 
+            ac.HolidayType.Halloween
+        )
+
+        -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity, 5.0)
+        -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position, vec3(0, 20, 0))
+        -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType, ac.HolidayType.NewYear)
+
+        -- ac.log(string.format("Started fireworks with index %d.  Position: %s, Intensity: %d, HolidayType: %d", fireworksIndex, tostring(FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position)), FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity), FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType)))
+
+        FireworksManager.startFireworks(
+            vec3(-128, 0.28, 0.48), 
+            10.0, 
+            ac.HolidayType.Christmas
+        )
+    end
+
+    if UIOperations_renderButton('Stop Fireworks', '', nil) then
+        FireworksManager.stopAllFireworks()
+    end
+
+    ui_popID()
+end
+
 
 -- Function defined in manifest.ini
 -- wiki: function to be called each frame to draw window content
@@ -718,38 +789,27 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
 
     UIOperations_newLine(1)
 
+    --[===[
+    ui_alignTextToFramePadding() -- called to align text properly with the button
+    ui_text('Other operations: ')
+    ui_sameLine()
+    if UIOperations_renderButton(
+        'Fireworks', 
+        'Manage fireworks effects on the track.',
+        nil
+    ) then
+        UIOperations.openFireworksWindow()
+    end
+
     ui_separator()
 
     UIOperations_newLine(1)
+    --]===]
 
-    ui_columns(3, true, "sections")
-    ui_setColumnWidth(0, COLUMNS_WIDTH)
-    ui_setColumnWidth(1, COLUMNS_WIDTH)
-    ui_setColumnWidth(2, COLUMNS_WIDTH)
-
-    -- Flames section
-    renderFlamesSection()
-    
-    ui_nextColumn()
-
-    -- Sparks section
-    renderSparksSection()
-    
-    ui_nextColumn()
-    
-    -- Smoke section
-    renderSmokeSection()
-    
-    -- finish the sections table
-    ui_columns(1, false)
-
-    UIOperations_newLine(1)
-    
-    --ui_separator()
-
-    ui.tabBar('CodeSectionsTabBar', function ()
-        ui.tabItem('ext_config.ini', renderExtConfigCodeTables)
-        ui.tabItem('LUA', renderLuaCodeSectionTables)
+    -- renderMainSection_ParticleEffects()
+    ui.tabBar('MainSectionsTabBar', function ()
+        ui.tabItem('Particle Effects', renderMainSection_ParticleEffects)
+        ui.tabItem('Fireworks', renderMainSection_Fireworks)
     end)
 
     --[===[
@@ -758,6 +818,14 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ac.log(string_format('Particle Effects window size: (%.2f, %.2f)', winSize.x, winSize.y))
     --]===]
 end
+
+--[==[
+function script.MANIFEST__FUNCTION_FIREWORKS()
+  -- if (not CAN_APP_RUN) then return end
+
+    -- ac.log('fireworks window')
+end
+--]==]
 
 ---
 -- wiki: called after a whole simulation update

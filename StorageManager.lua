@@ -89,7 +89,7 @@ StorageManager.Options = {
 local POSITION_OFFSET_MIN = -10
 local POSITION_OFFSET_MAX = 10
 
-local settingNotSupportedTooltip = 'Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format.'
+local settingNotSupportedTooltip = 'Warning: This setting is not supported by ext_config.ini so it cannot be represented in config format, only in lua code.'
 
 -- only used to fill in DoD tables, memory freed right after
 local optionsCollection_beforeDoD = {

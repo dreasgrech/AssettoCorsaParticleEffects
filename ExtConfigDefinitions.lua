@@ -5,6 +5,7 @@ ExtConfigDefinitions.SectionPrefixes = {
     [ParticleEffectsType.Flame] = 'FLAME',
     [ParticleEffectsType.Sparks] = 'SPARKS',
     [ParticleEffectsType.Smoke] = 'SMOKE',
+    [ParticleEffectsType.Fireworks] = 'PARTICLES_FX',
 }
 
 ---@enum ExtConfigDefinitions.ExtConfigKeyType 
@@ -29,6 +30,8 @@ ExtConfigDefinitions.ExtConfigKeyType = {
     Thickness = 14,
     -- Life = 15,
     TargetYVelocity = 16,
+
+    FireworksPosition = 17,
 }
 
 ExtConfigDefinitions.ExtConfigKeyNames = {
@@ -55,6 +58,9 @@ ExtConfigDefinitions.ExtConfigKeyNames = {
     [ExtConfigDefinitions.ExtConfigKeyType.Grow] = "GROW",
     [ExtConfigDefinitions.ExtConfigKeyType.Thickness] = "THICKNESS",
     [ExtConfigDefinitions.ExtConfigKeyType.TargetYVelocity] = "TARGET_Y_VELOCITY",
+
+    -- Fireworks
+    [ExtConfigDefinitions.ExtConfigKeyType.FireworksPosition] = "FIREWORKS_POS",
 }
 
 return ExtConfigDefinitions

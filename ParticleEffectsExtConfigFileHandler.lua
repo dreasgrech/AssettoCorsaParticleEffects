@@ -13,11 +13,13 @@ local outDirection = vec3(0, 0, 0)
 local writers = {
     ---@param file ac.INIConfig
     ---@param fullSectionName string
-    ---@param effect ac.Particles.Flame
-    ---@param position vec3
-    ---@param velocity vec3
-    ---@param amount number
-    [ParticleEffectsType.Flame] = function (file, fullSectionName, effect, position, velocity, amount)
+    ---@param effectInstance FlameEffectWrapper
+    [ParticleEffectsType.Flame] = function (file, fullSectionName, effectInstance)
+        local effect = effectInstance.effect
+        local position = effectInstance.getFinalPosition()
+        local velocity = effectInstance.velocity
+        local amount = effectInstance.amount
+
         local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
         local color = effect.color
 
@@ -35,11 +37,13 @@ local writers = {
     end,
     ---@param file ac.INIConfig
     ---@param fullSectionName string
-    ---@param effect ac.Particles.Sparks
-    ---@param position vec3
-    ---@param velocity vec3
-    ---@param amount number
-    [ParticleEffectsType.Sparks] = function (file, fullSectionName, effect, position, velocity, amount)
+    ---@param effectInstance SparksEffectWrapper
+    [ParticleEffectsType.Sparks] = function (file, fullSectionName, effectInstance)
+        local effect = effectInstance.effect
+        local position = effectInstance.getFinalPosition()
+        local velocity = effectInstance.velocity
+        local amount = effectInstance.amount
+
         local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
         local color = effect.color
 
@@ -57,11 +61,13 @@ local writers = {
     end,
     ---@param file ac.INIConfig
     ---@param fullSectionName string
-    ---@param effect ac.Particles.Smoke
-    ---@param position vec3
-    ---@param velocity vec3
-    ---@param amount number
-    [ParticleEffectsType.Smoke] = function (file, fullSectionName, effect, position, velocity, amount)
+    ---@param effectInstance SmokeEffectWrapper
+    [ParticleEffectsType.Smoke] = function (file, fullSectionName, effectInstance)
+        local effect = effectInstance.effect
+        local position = effectInstance.getFinalPosition()
+        local velocity = effectInstance.velocity
+        local amount = effectInstance.amount
+
         local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
         local color = effect.color
 
@@ -81,15 +87,33 @@ local writers = {
 
         -- ac.log(string.format("Wrote SMOKE section %s", fullSectionName))
     end,
+    ---@param file ac.INIConfig
+    ---@param fullSectionName string
+    ---@param effectInstance FireworksWrapper
+    [ParticleEffectsType.Fireworks] = function (file, fullSectionName, effectInstance)
+        -- Since the fireworks values write under the same [PARTICLES_FX] header, we shouldn't use the numbered header
+        local sectionName = SectionPrefixes[ParticleEffectsType.Fireworks]
+        sectionName = string_format('%s_...', sectionName)
+
+        local position = effectInstance.getFinalPosition()
+
+        file:set(sectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.FireworksPosition), position)
+    end
 }
 
 ---@param extConfigFileType ExtConfigFileHandler.ExtConfigFileTypes
 ---@param particleEffectsType ParticleEffectsType
----@param effectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
+---@param effectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper|FireworksWrapper
 ParticleEffectsExtConfigFileHandler.writeToExtConfig = function(extConfigFileType, particleEffectsType, effectInstance)
     local sectionPrefix = SectionPrefixes[particleEffectsType]
     if not sectionPrefix then
         ac.log('Unknown particle effects type: ' .. tostring(particleEffectsType))
+        return
+    end
+
+    local writer = writers[particleEffectsType]
+    if not writer then
+        ac.log('No ext_config writer for particle effects type: ' .. tostring(particleEffectsType))
         return
     end
 
@@ -99,14 +123,15 @@ ParticleEffectsExtConfigFileHandler.writeToExtConfig = function(extConfigFileTyp
         extConfigFileType,
         sectionPrefix,
         function (file, fullSectionName)
-            local effect = effectInstance.effect
-            local position = effectInstance.position
-            local positionOffset = effectInstance.positionOffset
-            local velocity = effectInstance.velocity
-            local amount = effectInstance.amount
+            -- local position = effectInstance.position
+            -- local positionOffset = effectInstance.positionOffset
+            -- local effect = effectInstance.effect
+            -- local velocity = effectInstance.velocity
+            -- local amount = effectInstance.amount
+            -- local finalPosition = position + positionOffset
 
-            local finalPosition = position + positionOffset
-            writers[particleEffectsType](file, fullSectionName, effect, finalPosition, velocity, amount)
+            -- writer(file, fullSectionName, effect, finalPosition, velocity, amount)
+            writer(file, fullSectionName, effectInstance)
         end
     )
 end

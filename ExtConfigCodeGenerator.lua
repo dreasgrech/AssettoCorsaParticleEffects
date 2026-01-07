@@ -61,12 +61,14 @@ TARGET_Y_VELOCITY = 0.5
 --- Temporary vector for direction calculation
 local outDirection = vec3(0, 0, 0)
 
----@param effect ac.Particles.Flame|ac.Particles.Smoke|ac.Particles.Sparks
----@param position vec3
----@param velocity vec3
----@param amount number
+---@param effectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
 ---@param header string
-local generateCommon = function(effect, position, velocity, amount, header)
+local generateParticleEffectCommon = function(effectInstance, header)
+    local effect = effectInstance.effect
+    local position = effectInstance.getFinalPosition()
+    local velocity = effectInstance.velocity
+    local amount = effectInstance.amount
+
     local speed, direction = MathOperations_splitVelocity(velocity, outDirection)
     local color = effect.color
     
@@ -80,31 +82,26 @@ local generateCommon = function(effect, position, velocity, amount, header)
 end
 
 local generators = {
-    ---@param effect ac.Particles.Flame
-    ---@param position vec3
-    ---@param velocity vec3
-    ---@param amount number
-    ---@return string
-    [ParticleEffectsType.Flame] = function (effect, position, velocity, amount)
+    ---@param effectInstance FlameEffectWrapper
+    [ParticleEffectsType.Flame] = function (effectInstance)
         StringBuilder_clear()
 
-        generateCommon(effect, position, velocity, amount, "FLAME")
+        local effect = effectInstance.effect
+
+        generateParticleEffectCommon(effectInstance, "FLAME")
 
         StringBuilder_append(string.format("%s = %.2f", ExtConfigKeyNames[ExtConfigKeyType.TemperatureMult], effect.temperatureMultiplier))
         StringBuilder_append(string.format("%s = %.2f", ExtConfigKeyNames[ExtConfigKeyType.FlameIntensity], effect.flameIntensity))
 
         return StringBuilder_toString()
     end,
-
-    ---@param effect ac.Particles.Sparks
-    ---@param position vec3
-    ---@param velocity vec3
-    ---@param amount number
-    ---@return string
-    [ParticleEffectsType.Sparks] = function (effect, position, velocity, amount)
+    ---@param effectInstance SparksEffectWrapper
+    [ParticleEffectsType.Sparks] = function (effectInstance)
         StringBuilder_clear()
 
-        generateCommon(effect, position, velocity, amount, "SPARKS")
+        local effect = effectInstance.effect
+
+        generateParticleEffectCommon(effectInstance, "SPARKS")
 
         StringBuilder_append(string.format("%s = %.2f", ExtConfigKeyNames[ExtConfigKeyType.Life], effect.life))
         StringBuilder_append(string.format("%s = %.2f", ExtConfigKeyNames[ExtConfigKeyType.SpreadDir], effect.directionSpread))
@@ -112,16 +109,13 @@ local generators = {
 
         return StringBuilder_toString()
     end,
-
-    ---@param effect ac.Particles.Smoke
-    ---@param position vec3
-    ---@param velocity vec3
-    ---@param amount number
-    ---@return string
-    [ParticleEffectsType.Smoke] = function (effect, position, velocity, amount)
+    ---@param effectInstance SmokeEffectWrapper
+    [ParticleEffectsType.Smoke] = function (effectInstance)
         StringBuilder_clear()
 
-        generateCommon(effect, position, velocity, amount, "SMOKE")
+        local effect = effectInstance.effect
+
+        generateParticleEffectCommon(effectInstance, "SMOKE")
 
         StringBuilder_append(string.format("%s = %.2f", ExtConfigKeyNames[ExtConfigKeyType.Life], effect.life))
         StringBuilder_append(string.format("%s = %.2f", ExtConfigKeyNames[ExtConfigKeyType.ColorConsistency], effect.colorConsistency))
@@ -132,17 +126,25 @@ local generators = {
 
         return StringBuilder_toString()
     end,
+    ---@param effectInstance FireworksWrapper
+    [ParticleEffectsType.Fireworks] = function (effectInstance)
+        StringBuilder_clear()
+
+        local position = effectInstance.getFinalPosition()
+
+        StringBuilder_append(string.format("[%s]", ExtConfigDefinitions.SectionPrefixes[ParticleEffectsType.Fireworks]))
+        StringBuilder_append(string.format("%s = %.2f, %.2f, %.2f", ExtConfigKeyNames[ExtConfigKeyType.FireworksPosition], position.x, position.y, position.z))
+
+        return StringBuilder_toString()
+    end
 }
 
 --- Generate ext_config format for the given particle effect
 ---@param effectType ParticleEffectsType
----@param effect ac.Particles.Flame|ac.Particles.Smoke|ac.Particles.Sparks
----@param position vec3
----@param velocity vec3
----@param amount number
+---@param effectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper|FireworksWrapper
 ---@return string
-ExtConfigCodeGenerator.generateCode = function(effectType, effect, position, velocity, amount)
-    return generators[effectType](effect, position, velocity, amount)
+ExtConfigCodeGenerator.generateCode = function(effectType, effectInstance)
+    return generators[effectType](effectInstance)
 end
 
 ---@param extConfigKeyType ExtConfigDefinitions.ExtConfigKeyType

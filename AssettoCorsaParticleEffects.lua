@@ -540,7 +540,7 @@ local renderCodeSection = function(codeText)
 end
 
 ---@param particleEffectsType ParticleEffectsType
----@param particleEffectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper
+---@param particleEffectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper|FireworksWrapper
 local renderExportButtons = function(particleEffectsType, particleEffectInstance)
     if UIOperations_renderButton(
         'Save to global track config',
@@ -602,7 +602,7 @@ local renderLuaCodeSectionTables = function()
     ui_columns(1, false)
 end
 
-local renderExtConfigCodeTables = function()
+local renderParticleEffectsExtConfigCodeTables = function()
     -- The table for the ext_config.ini code sections
     ui_columns(3, true, "ext_config_sections")
     ui_setColumnWidth(0, COLUMNS_WIDTH)
@@ -611,7 +611,8 @@ local renderExtConfigCodeTables = function()
 
     -- Flames ext_config.ini section
     UIOperations_createDisabledSection(not flameInstance.enabled, function()
-        local flameExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        -- local flameExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Flame, flame, flameInstance.getFinalPosition(), flameInstance.velocity, flameInstance.amount)
+        local flameExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Flame, flameInstance)
         renderCodeSection(flameExtConfigFormat)
     end)
     
@@ -619,7 +620,8 @@ local renderExtConfigCodeTables = function()
     
     -- Sparks ext_config.ini section
     UIOperations_createDisabledSection(not sparksInstance.enabled, function()
-        local sparksExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        -- local sparksExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparks, sparksInstance.getFinalPosition(), sparksInstance.velocity, sparksInstance.amount)
+        local sparksExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Sparks, sparksInstance)
         renderCodeSection(sparksExtConfigFormat)
     end)
     
@@ -627,7 +629,8 @@ local renderExtConfigCodeTables = function()
     
     -- Smoke ext_config.ini section
     UIOperations_createDisabledSection(not smokeInstance.enabled, function()
-        local smokeExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        -- local smokeExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Smoke, smoke, smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
+        local smokeExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Smoke, smokeInstance)
         renderCodeSection(smokeExtConfigFormat)
     end)
     
@@ -678,6 +681,22 @@ local renderExtConfigCodeTables = function()
     --UIOperations_newLine(1)
 end
 
+local renderFireworksExtConfigCodeTables = function()
+    -- Flames ext_config.ini section
+    UIOperations_createDisabledSection(not fireworksInstance.enabled, function()
+        local fireworksExtConfigFormat = ExtConfigCodeGenerator_generateCode(ParticleEffectsType.Fireworks, fireworksInstance)
+        renderCodeSection(fireworksExtConfigFormat)
+    end)
+
+    UIOperations_newLine(1)
+
+    ui_pushID("ExportFireworksSection")
+    UIOperations_createDisabledSection(not fireworksInstance.enabled, function()
+        renderExportButtons(ParticleEffectsType.Fireworks, fireworksInstance)
+    end)
+    ui_popID()
+end
+
 local renderMainSection_ParticleEffects = function()
     ui_pushID('MainSection_ParticleEffects')
 
@@ -707,7 +726,7 @@ local renderMainSection_ParticleEffects = function()
     --ui_separator()
 
     ui.tabBar('CodeSectionsTabBar', function ()
-        ui.tabItem('ext_config.ini', renderExtConfigCodeTables)
+        ui.tabItem('ext_config.ini', renderParticleEffectsExtConfigCodeTables)
         ui.tabItem('LUA', renderLuaCodeSectionTables)
     end)
 
@@ -793,6 +812,11 @@ local renderMainSection_Fireworks = function()
     storage.fireworks_positionOffset = fireworksInstance.positionOffset
     storage.fireworks_intensity = fireworksInstance.intensity
     storage.fireworks_holidayType = fireworksInstance.holidayType
+
+    ui.tabBar('FireworksCodeSectionsTabBar', function ()
+        ui.tabItem('ext_config.ini', renderFireworksExtConfigCodeTables)
+        -- ui.tabItem('LUA', renderLuaCodeSectionTables)
+    end)
 
     ui_popID()
 end

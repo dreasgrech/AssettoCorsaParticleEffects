@@ -49,6 +49,7 @@ local generateParticleEffectsLua = function(effectType, effectInstance, effectFi
     StringBuilder_append(string.format("\tcolor = rgbm(%.3f, %.3f, %.3f, %.3f),", effect.color.r, effect.color.g, effect.color.b, effect.color.mult))
     StringBuilder_append(string.format("\tsize = %.2f,", effect.size))
 
+    -- call the callback to add effect-specific fields
     effectFieldsCallback()
 
     StringBuilder_append("})")
@@ -60,8 +61,6 @@ local generateParticleEffectsLua = function(effectType, effectInstance, effectFi
     if extraCodeUnderInitializationGenerator ~= nil then
         extraCodeUnderInitializationGenerator(effectInstance)
     end
-
-    local variableInstanceName = particleEffectsLuaVariableInstanceNames[effectType]
 
     local position = effectInstance.getFinalPosition()
     local velocity = effectInstance.velocity
@@ -126,26 +125,10 @@ local generators = {
 ---@param effectInstance FlameEffectWrapper|SparksEffectWrapper|SmokeEffectWrapper|FireworksWrapper
 ---@return string
 LuaParticleEffectsCodeGenerator.generateCode = function(effectType, effectInstance)
-    -- local effect = effectInstance.effect
-    -- local position = effectInstance.getFinalPosition()
-    -- local velocity = effectInstance.velocity
-    -- local amount = effectInstance.amount
-
     StringBuilder_clear()
 
-    -- local variableInstanceName = variableInstanceNames[effectType]
-    -- StringBuilder_append(string.format("-- Create the %s effect", variableInstanceName))
-    -- StringBuilder_append(string.format("local %s = %s({", variableInstanceName, particleEffectLuaTypes[effectType]))
-    -- StringBuilder_append(string.format("\tcolor = rgbm(%.3f, %.3f, %.3f, %.3f),", effect.color.r, effect.color.g, effect.color.b, effect.color.mult))
-    -- StringBuilder_append(string.format("\tsize = %.2f,", effect.size))
-
-    -- generateParticleEffectsLua_PreEffectSpecificFields(effectType, effectInstance)
-
-    -- add the effect-specific fields
-    -- generators[effectType](effect)
+    -- fill up the StringBuilder with the lua code text
     generators[effectType](effectInstance)
-
-    -- generateParticleEffectsLua_PostEffectSpecificFields(effectType, effectInstance)
 
     return StringBuilder_toString()
 end

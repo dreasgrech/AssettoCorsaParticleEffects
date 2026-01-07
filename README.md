@@ -218,3 +218,10 @@ Here's how you can get started with writing lua apps: https://github.com/CheesyM
 ## Planned work
 * Some way of viewing and removing existing particle effects that are defined in config from the app itself.
 * Setting positions for fireworks (thanks [@leBluem](https://github.com/leBluem) for the idea) in the app, and triggering fireworks from the app to test the positions.
+
+## Thank You
+This app has taken many many hours of development work to get it in the state it is today, so if you enjoy using it, please consider buying me a coffee.  It will be immensely appreciated.
+
+<a href="https://buymeacoffee.com/dreasgrech" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+
+![541071877_18289519078282595_5138839538470946793_n_](https://github.com/user-attachments/assets/97cc68b6-5942-465e-b3c1-4c170b929692) ![racetracker_39753918_619967__](https://github.com/user-attachments/assets/32a6c8c3-dccb-47a0-bb18-98d946f5b80f)

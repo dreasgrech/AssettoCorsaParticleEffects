@@ -93,11 +93,13 @@ local writers = {
     [ParticleEffectsType.Fireworks] = function (file, fullSectionName, effectInstance)
         -- Since the fireworks values write under the same [PARTICLES_FX] header, we shouldn't use the numbered header
         local sectionName = SectionPrefixes[ParticleEffectsType.Fireworks]
-        sectionName = string_format('%s_...', sectionName)
+        -- sectionName = string.format('%s_...', sectionName)
 
         local position = effectInstance.getFinalPosition()
 
-        file:set(sectionName, ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.FireworksPosition), position)
+        -- local fireworksPositionKeyName = ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.FireworksPosition)
+        local fireworksPositionKeyName = string.format('%s_...', ExtConfigCodeGenerator_getExtConfigKeyName(ExtConfigKeyType.FireworksPosition))
+        file:set(sectionName, fireworksPositionKeyName, position)
     end
 }
 

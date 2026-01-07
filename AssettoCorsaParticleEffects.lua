@@ -211,6 +211,8 @@ local fireworksInstance = ParticleEffectsManager.generateParticleEffect(Particle
 fireworksInstance.enabled = storage.fireworks_enabled
 fireworksInstance.position = storage.fireworks_position
 fireworksInstance.positionOffset = storage.fireworks_positionOffset
+fireworksInstance.intensity = storage.fireworks_intensity
+fireworksInstance.holidayType = storage.fireworks_holidayType
 
 ac.log(fireworksInstance)
 
@@ -250,7 +252,7 @@ local SETPOSITION_BUTTON_COLORS = {
     waitingForClick_text = rgbm(0.0, 0.0, 0.0, 1.0),
 }
 
----@param particleEffectInstance ParticleEffectWrapper
+---@param particleEffectInstance BaseEffectWrapper
 local renderPositionSection = function(particleEffectInstance)
         -- Show the position value label
         ui_alignTextToFramePadding() -- called to align text properly with the button
@@ -329,8 +331,6 @@ local renderFlamesSection = function()
         flame.temperatureMultiplier = renderOptionSlider(StorageManager.Options.Flame_TemperatureMultiplier, flame.temperatureMultiplier)
         flame.flameIntensity = renderOptionSlider(StorageManager.Options.Flame_FlameIntensity, flame.flameIntensity)
     end)
-    
-    ui_popID()
 
     if flameInstance.waitingForClickToSetPosition then
         local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
@@ -352,6 +352,8 @@ local renderFlamesSection = function()
     storage.flame_size = flame.size
     storage.flame_temperatureMultiplier = flame.temperatureMultiplier
     storage.flame_flameIntensity = flame.flameIntensity
+
+    ui_popID()
 end
 
 local renderSparksSection = function()
@@ -400,8 +402,6 @@ local renderSparksSection = function()
         sparks.directionSpread = renderOptionSlider(StorageManager.Options.Sparks_DirectionSpread, sparks.directionSpread)
         sparks.positionSpread = renderOptionSlider(StorageManager.Options.Sparks_PositionSpread, sparks.positionSpread)
     end)
-    
-    ui_popID()
 
     if sparksInstance.waitingForClickToSetPosition then
         local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
@@ -424,6 +424,8 @@ local renderSparksSection = function()
     storage.sparks_size = sparks.size
     storage.sparks_directionSpread = sparks.directionSpread
     storage.sparks_positionSpread = sparks.positionSpread
+
+    ui_popID()
 end
 
 local renderSmokeSection = function()
@@ -488,8 +490,6 @@ local renderSmokeSection = function()
         end
         smoke.flags = flags
     end)
-    
-    ui_popID()
 
     if smokeInstance.waitingForClickToSetPosition then
         local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
@@ -517,6 +517,8 @@ local renderSmokeSection = function()
     storage.smoke_targetYVelocity = smoke.targetYVelocity
     storage.smoke_disableCollisions = smokeInstance.disableCollisions
     storage.smoke_fadeIn = smokeInstance.fadeIn
+    
+    ui_popID()
 end
 
 local COLUMNS_WIDTH = 370
@@ -718,16 +720,31 @@ local renderMainSection_Fireworks = function()
     ui_dwriteText('Fireworks', UI_HEADER_TEXT_FONT_SIZE)
     UIOperations_newLine(1)
 
-    local fireworksEnabled = storage.fireworks_enabled
-    local fireworksPosition = storage.fireworks_position
-    local fireworksPositionOffset = storage.fireworks_positionOffset
-
     -- Enabled
-    fireworksEnabled = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Fireworks_Enabled], StorageManager__options_tooltip[StorageManager.Options.Fireworks_Enabled], fireworksEnabled, StorageManager__options_default[StorageManager.Options.Fireworks_Enabled])
+    fireworksInstance.enabled = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Fireworks_Enabled], StorageManager__options_tooltip[StorageManager.Options.Fireworks_Enabled], fireworksInstance.enabled, StorageManager__options_default[StorageManager.Options.Fireworks_Enabled])
 
     UIOperations_newLine(1)
 
-    UIOperations_createDisabledSection(not fireworksEnabled, function()
+    UIOperations_createDisabledSection(not fireworksInstance.enabled, function()
+        renderPositionSection(fireworksInstance)
+
+        -- Position Offset
+        ui_text(StorageManager__options_label[StorageManager.Options.Fireworks_PositionOffset])
+        UIOperations_setTooltip(POSITION_OFFSET_SETTING_LABEL_TOOLTIP)
+
+        -- The slider grab color changes if the value is not zero for the position offset so that the user can easily see that an offset is applied
+        local positionOffsetXSliderGrabColor = fireworksInstance.positionOffset.x ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetYSliderGrabColor = fireworksInstance.positionOffset.y ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        local positionOffsetZSliderGrabColor = fireworksInstance.positionOffset.z ~= 0 and POSITION_OFFSET_SETTING_SLIDER_NOT_ZERO_COLOR or UIOperations_DEFAULT_UI_COMPONENT_COLORS_sliderGrab
+        ---@type vec3
+        local positionOffsetDefaultValue = StorageManager__options_default[StorageManager.Options.Fireworks_PositionOffset]
+        fireworksInstance.positionOffset = UIOperations_renderVec3Sliders(StorageManager__options_label[StorageManager.Options.Fireworks_PositionOffset], fireworksInstance.positionOffset, StorageManager__options_min[StorageManager.Options.Fireworks_PositionOffset], StorageManager__options_max[StorageManager.Options.Fireworks_PositionOffset], nil, positionOffsetXSliderGrabColor, positionOffsetYSliderGrabColor, positionOffsetZSliderGrabColor, positionOffsetDefaultValue)
+        
+        UIOperations_newLine(1)
+
+        fireworksInstance.intensity = renderOptionSlider(StorageManager.Options.Fireworks_Intensity, fireworksInstance.intensity)
+
+        --[====[
         if UIOperations_renderButton('Start Fireworks', '', nil) then
             local playerCar = ac.getCar(0)
             local fireworksIndex = FireworksManager.startFireworks(
@@ -752,12 +769,30 @@ local renderMainSection_Fireworks = function()
         if UIOperations_renderButton('Stop Fireworks', '', nil) then
             FireworksManager.stopAllFireworks()
         end
+        --]====]
     end)
 
+    if fireworksInstance.waitingForClickToSetPosition then
+        local worldPositionFound, out_worldPosition = UIOperations_tryGetWorldPositionFromMouseClick()
+        if worldPositionFound then
+            -- ac.log('Fireworks position set to: ' .. tostring(out_worldPosition))
+            fireworksInstance.position = out_worldPosition
+            fireworksInstance.waitingForClickToSetPosition = false
+        end
+    end
+
+    -- Apply the fireworks values to the fireworks effect
+    local fireworksIndex = fireworksInstance.fireworksIndex
+    FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position, fireworksInstance.getFinalPosition())
+    FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity, fireworksInstance.intensity)
+    FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType, fireworksInstance.holidayType)
+
     -- Update the storage values with the instance values
-    storage.fireworks_enabled = fireworksEnabled
-    storage.fireworks_position = fireworksPosition
-    storage.fireworks_positionOffset = fireworksPositionOffset
+    storage.fireworks_enabled = fireworksInstance.enabled
+    storage.fireworks_position = fireworksInstance.position
+    storage.fireworks_positionOffset = fireworksInstance.positionOffset
+    storage.fireworks_intensity = fireworksInstance.intensity
+    storage.fireworks_holidayType = fireworksInstance.holidayType
 
     ui_popID()
 end
@@ -844,6 +879,7 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     local winSize = ui.windowSize()
     ac.log(string_format('Particle Effects window size: (%.2f, %.2f)', winSize.x, winSize.y))
     --]===]
+    -- ac.log(FireworksManager.getFireworksValue(fireworksInstance.fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity))
 end
 
 --[==[

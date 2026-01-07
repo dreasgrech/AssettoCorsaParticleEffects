@@ -22,3 +22,5 @@
 
 ---@class FireworksWrapper : BaseEffectWrapper
 ---@field fireworksIndex number
+---@field intensity number
+---@field holidayType ac.HolidayType

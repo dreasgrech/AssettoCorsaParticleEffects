@@ -88,6 +88,8 @@ StorageManager.Options = {
     Fireworks_Enabled = 35,
     Fireworks_Position = 36,
     Fireworks_PositionOffset = 37,
+    Fireworks_Intensity = 38,
+    Fireworks_HolidayType = 39,
 }
 
 local POSITION_OFFSET_MIN = -10
@@ -137,6 +139,8 @@ local optionsCollection_beforeDoD = {
     { name = StorageManager.Options.Fireworks_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable the Fireworks particle effect.' },
     { name = StorageManager.Options.Fireworks_Position, default=vec3(0,0,0), min=nil, max=nil, label='Position', tooltip='Fireworks position in world coordinates.' },
     { name = StorageManager.Options.Fireworks_PositionOffset, default=vec3(0,0,0), min=POSITION_OFFSET_MIN, max=POSITION_OFFSET_MAX, label='Position Offset', tooltip='Offset in position from the base position.' },
+    { name = StorageManager.Options.Fireworks_Intensity, default=0.0, min=0, max=10, label='Intensity', tooltip='The intensity of the fireworks.' },
+    { name = StorageManager.Options.Fireworks_HolidayType, default=ac.HolidayType.Generic, min=nil, max=nil, label='Holiday Type', tooltip='The type of holiday for the fireworks.' },
 }
 
 -- -- Since the label is used as an identifier in the ui elements, make sure we only have unique labels (otherwise the ui elements will conflict)
@@ -203,6 +207,8 @@ optionsCollection_beforeDoD = nil  -- free memory
 ---@field fireworks_enabled boolean
 ---@field fireworks_position vec3
 ---@field fireworks_positionOffset vec3
+---@field fireworks_intensity number
+---@field fireworks_holidayType ac.HolidayType
 
 ---@type StorageTable
 local storageTable = {
@@ -248,6 +254,8 @@ local storageTable = {
     fireworks_enabled = StorageManager.options_default[StorageManager.Options.Fireworks_Enabled],
     fireworks_position = StorageManager.options_default[StorageManager.Options.Fireworks_Position]:clone(),
     fireworks_positionOffset = StorageManager.options_default[StorageManager.Options.Fireworks_PositionOffset]:clone(),
+    fireworks_intensity = StorageManager.options_default[StorageManager.Options.Fireworks_Intensity],
+    fireworks_holidayType = StorageManager.options_default[StorageManager.Options.Fireworks_HolidayType],
 }
 
 ---@type StorageTable

@@ -84,6 +84,10 @@ StorageManager.Options = {
     Smoke_TargetYVelocity = 32,
     Smoke_DisableCollisions = 33,
     Smoke_FadeIn = 34,
+
+    Fireworks_Enabled = 35,
+    Fireworks_Position = 36,
+    Fireworks_PositionOffset = 37,
 }
 
 local POSITION_OFFSET_MIN = -10
@@ -129,6 +133,10 @@ local optionsCollection_beforeDoD = {
     { name = StorageManager.Options.Smoke_Amount, default=1, min=0, max=5, label='Amount', tooltip='The amount of particles emitted.' }, -- max=5 value from conversation with Ilya
     { name = StorageManager.Options.Smoke_DisableCollisions, default=false, min=nil, max=nil, label='Disable Collisions', tooltip=string.format('Disable smoke collisions with the environment.\n\n%s', settingNotSupportedTooltip) },
     { name = StorageManager.Options.Smoke_FadeIn, default=false, min=nil, max=nil, label='Fade In', tooltip=string.format('Enable smoke fade-in effect.\n\n%s', settingNotSupportedTooltip) },
+
+    { name = StorageManager.Options.Fireworks_Enabled, default=false, min=nil, max=nil, label='Enabled', tooltip='Enable the Fireworks particle effect.' },
+    { name = StorageManager.Options.Fireworks_Position, default=vec3(0,0,0), min=nil, max=nil, label='Position', tooltip='Fireworks position in world coordinates.' },
+    { name = StorageManager.Options.Fireworks_PositionOffset, default=vec3(0,0,0), min=POSITION_OFFSET_MIN, max=POSITION_OFFSET_MAX, label='Position Offset', tooltip='Offset in position from the base position.' },
 }
 
 -- -- Since the label is used as an identifier in the ui elements, make sure we only have unique labels (otherwise the ui elements will conflict)
@@ -192,6 +200,9 @@ optionsCollection_beforeDoD = nil  -- free memory
 ---@field smoke_amount number
 ---@field smoke_disableCollisions boolean
 ---@field smoke_fadeIn boolean
+---@field fireworks_enabled boolean
+---@field fireworks_position vec3
+---@field fireworks_positionOffset vec3
 
 ---@type StorageTable
 local storageTable = {
@@ -232,7 +243,11 @@ local storageTable = {
     smoke_targetYVelocity = StorageManager.options_default[StorageManager.Options.Smoke_TargetYVelocity],
     smoke_amount = StorageManager.options_default[StorageManager.Options.Smoke_Amount],
     smoke_disableCollisions = StorageManager.options_default[StorageManager.Options.Smoke_DisableCollisions],
-    smoke_fadeIn = StorageManager.options_default[StorageManager.Options.Smoke_FadeIn]
+    smoke_fadeIn = StorageManager.options_default[StorageManager.Options.Smoke_FadeIn],
+
+    fireworks_enabled = StorageManager.options_default[StorageManager.Options.Fireworks_Enabled],
+    fireworks_position = StorageManager.options_default[StorageManager.Options.Fireworks_Position]:clone(),
+    fireworks_positionOffset = StorageManager.options_default[StorageManager.Options.Fireworks_PositionOffset]:clone(),
 }
 
 ---@type StorageTable

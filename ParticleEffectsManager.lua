@@ -1,26 +1,8 @@
 ﻿local ParticleEffectsManager = {}
 
----@class BaseEffectWrapper
----@field enabled boolean
----@field position vec3
----@field positionOffset vec3
----@field velocity vec3
----@field amount number
----@field waitingForClickToSetPosition boolean
----@field getFinalPosition fun():vec3
-
----@class FlameEffectWrapper : BaseEffectWrapper
----@field effect ac.Particles.Flame
-
----@class SparksEffectWrapper : BaseEffectWrapper
----@field effect ac.Particles.Sparks
-
----@class SmokeEffectWrapper : BaseEffectWrapper
----@field effect ac.Particles.Smoke
----@field disableCollisions boolean
----@field fadeIn boolean
-
-local generateWrapper = function(effect)
+---@param effect ac.Particles.Flame|ac.Particles.Sparks|ac.Particles.Smoke
+---@return ParticleEffectWrapper
+local generateParticleEffectWrapper = function(effect)
     local wrapper = {
         enabled = false,
         
@@ -38,6 +20,29 @@ local generateWrapper = function(effect)
         return wrapper.position + wrapper.positionOffset
     end
 
+    ---@cast wrapper ParticleEffectWrapper
+    return wrapper
+end
+
+---@param fireworksIndex number
+---@return FireworksWrapper
+local generateFireworksWrapper = function(fireworksIndex)
+    local wrapper = {
+        enabled = false,
+
+        position = vec3(0, 0, 0),
+        positionOffset = vec3(0, 0, 0),
+
+        waitingForClickToSetPosition = false,
+
+        fireworksIndex = fireworksIndex,
+    }
+
+    wrapper.getFinalPosition = function()
+        return wrapper.position + wrapper.positionOffset
+    end
+
+    ---@cast wrapper FireworksWrapper
     return wrapper
 end
 
@@ -53,10 +58,11 @@ local generators = {
                 flameIntensity = 0
             })
             
-            local obj = generateWrapper(flame)
+            local obj = generateParticleEffectWrapper(flame)
             return obj;
         end)()
         
+        ---@cast instance FlameEffectWrapper
         return instance
     end,
     ---@return SparksEffectWrapper
@@ -71,10 +77,11 @@ local generators = {
                 positionSpread = 0
             })
 
-            local obj = generateWrapper(sparks)
+            local obj = generateParticleEffectWrapper(sparks)
             return obj;
         end)()
 
+        ---@cast instance SparksEffectWrapper
         return instance
     end,
     ---@return SmokeEffectWrapper
@@ -92,12 +99,22 @@ local generators = {
                 targetYVelocity = 0,
             })
 
-            local obj = generateWrapper(smoke)
+            local obj = generateParticleEffectWrapper(smoke)
+            ---@cast obj SmokeEffectWrapper
             obj.disableCollisions = false
             obj.fadeIn = false
             return obj;
         end)()
 
+        ---@cast instance SmokeEffectWrapper
+        return instance
+    end,
+    ---@return FireworksWrapper
+    [ParticleEffectsType.Fireworks] = function()
+        local fireworksIndex = FireworksManager.startFireworks(vec3(0,0,0), 0, ac.HolidayType.Generic)
+        local instance = generateFireworksWrapper(fireworksIndex)
+
+        ---@cast instance FireworksWrapper
         return instance
     end
 }
@@ -108,7 +125,7 @@ local generators = {
 -- ---@overload fun(effectType: ParticleEffectsType.Smoke): SmokeEffectWrapper
 
 ---@param effectType ParticleEffectsType
----@return FlameEffectWrapper|SmokeEffectWrapper|SparksEffectWrapper
+---@return FlameEffectWrapper|SmokeEffectWrapper|SparksEffectWrapper|FireworksWrapper
 ParticleEffectsManager.generateParticleEffect = function(effectType)
     return generators[effectType]()
 end

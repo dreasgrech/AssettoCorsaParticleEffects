@@ -62,6 +62,7 @@ ParticleEffectsType = {
     Flame = 1,
     Smoke = 2,
     Sparks = 3,
+    Fireworks = 4
 }
 
 StringBuilder = require('StringBuilder')
@@ -205,6 +206,14 @@ smoke.spreadK = storage.smoke_spreadK
 smoke.growK = storage.smoke_growK
 smoke.targetYVelocity = storage.smoke_targetYVelocity
 
+local fireworksInstance = ParticleEffectsManager.generateParticleEffect(ParticleEffectsType.Fireworks)
+---@cast fireworksInstance FireworksWrapper
+fireworksInstance.enabled = storage.fireworks_enabled
+fireworksInstance.position = storage.fireworks_position
+fireworksInstance.positionOffset = storage.fireworks_positionOffset
+
+ac.log(fireworksInstance)
+
 
 --[====[
 local flamesInstances = {}
@@ -241,6 +250,7 @@ local SETPOSITION_BUTTON_COLORS = {
     waitingForClick_text = rgbm(0.0, 0.0, 0.0, 1.0),
 }
 
+---@param particleEffectInstance ParticleEffectWrapper
 local renderPositionSection = function(particleEffectInstance)
         -- Show the position value label
         ui_alignTextToFramePadding() -- called to align text properly with the button
@@ -511,8 +521,9 @@ end
 
 local COLUMNS_WIDTH = 370
 
-local renderCodeSection = function(extConfigFormat)
-    ui_text(extConfigFormat)
+---@param codeText string
+local renderCodeSection = function(codeText)
+    ui_text(codeText)
     -- ui.textWrapped(extConfigFormat)
 
     if ui_itemHovered() then
@@ -521,7 +532,7 @@ local renderCodeSection = function(extConfigFormat)
     end
 
     if ui_itemClicked(ui.MouseButton.Left, true) then
-        ac_setClipboardText(extConfigFormat)
+        ac_setClipboardText(codeText)
         ac_setMessage('Copied', 'Copied to clipboard', nil, 5.0)
     end
 end
@@ -707,30 +718,46 @@ local renderMainSection_Fireworks = function()
     ui_dwriteText('Fireworks', UI_HEADER_TEXT_FONT_SIZE)
     UIOperations_newLine(1)
 
-    if UIOperations_renderButton('Start Fireworks', '', nil) then
-        local playerCar = ac.getCar(0)
-        local fireworksIndex = FireworksManager.startFireworks(
-            playerCar.position + vec3(0, 10, 0), 
-            1.0, 
-            ac.HolidayType.Halloween
-        )
+    local fireworksEnabled = storage.fireworks_enabled
+    local fireworksPosition = storage.fireworks_position
+    local fireworksPositionOffset = storage.fireworks_positionOffset
 
-        -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity, 5.0)
-        -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position, vec3(0, 20, 0))
-        -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType, ac.HolidayType.NewYear)
+    -- Enabled
+    fireworksEnabled = UIOperations_renderCheckbox(StorageManager__options_label[StorageManager.Options.Fireworks_Enabled], StorageManager__options_tooltip[StorageManager.Options.Fireworks_Enabled], fireworksEnabled, StorageManager__options_default[StorageManager.Options.Fireworks_Enabled])
 
-        -- ac.log(string.format("Started fireworks with index %d.  Position: %s, Intensity: %d, HolidayType: %d", fireworksIndex, tostring(FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position)), FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity), FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType)))
+    UIOperations_newLine(1)
 
-        FireworksManager.startFireworks(
-            vec3(-128, 0.28, 0.48), 
-            10.0, 
-            ac.HolidayType.Christmas
-        )
-    end
+    UIOperations_createDisabledSection(not fireworksEnabled, function()
+        if UIOperations_renderButton('Start Fireworks', '', nil) then
+            local playerCar = ac.getCar(0)
+            local fireworksIndex = FireworksManager.startFireworks(
+                playerCar.position + vec3(0, 10, 0), 
+                1.0, 
+                ac.HolidayType.Halloween
+            )
 
-    if UIOperations_renderButton('Stop Fireworks', '', nil) then
-        FireworksManager.stopAllFireworks()
-    end
+            -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity, 5.0)
+            -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position, vec3(0, 20, 0))
+            -- FireworksManager.setFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType, ac.HolidayType.NewYear)
+
+            -- ac.log(string.format("Started fireworks with index %d.  Position: %s, Intensity: %d, HolidayType: %d", fireworksIndex, tostring(FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Position)), FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity), FireworksManager.getFireworksValue(fireworksIndex, FireworksManager.FIREWORKS_VALUES.HolidayType)))
+
+            FireworksManager.startFireworks(
+                vec3(-128, 0.28, 0.48), 
+                10.0, 
+                ac.HolidayType.Christmas
+            )
+        end
+
+        if UIOperations_renderButton('Stop Fireworks', '', nil) then
+            FireworksManager.stopAllFireworks()
+        end
+    end)
+
+    -- Update the storage values with the instance values
+    storage.fireworks_enabled = fireworksEnabled
+    storage.fireworks_position = fireworksPosition
+    storage.fireworks_positionOffset = fireworksPositionOffset
 
     ui_popID()
 end

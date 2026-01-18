@@ -78,7 +78,10 @@ LuaParticleEffectsCodeGenerator = require("LuaParticleEffectsCodeGenerator")
 FireworksManager = require("FireworksManager")
 
 
+--[===[
+-- Tsuka1427's flame:
 require('lib/raFlame/raFlame')
+--]===]
 
 -- local bindings
 local bit_bor = bit.bor
@@ -937,12 +940,14 @@ function script.MANIFEST__FUNCTION_FIREWORKS()
 end
 --]==]
 
+
+--[==[
+-- Tsuka1427's flame
 local japaneseFlame = raFlame.placeFlame(flameInstance.position, vec2(1, 2), {
   power = 0.5,
   style = 0.0,
   speed = 1.0
 })
---[==[
 --]==]
 
 ---
@@ -961,15 +966,17 @@ function script.MANIFEST__UPDATE(dt)
         smoke:emit(smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
     end
 
+--[==[
+    -- Tsuka1427's flame
     japaneseFlame:setPosition(flameInstance.position)
     raFlame.updateFlames(dt)
---[==[
 --]==]
 end
 
 --[==[
 function script.MANIFEST__TRANSPARENT(dt)
-    raFlame.updateFlames(dt)
+    -- Tsuka1427's flame
+    raFlame.updateFlames(dt) -- testing with calling in the transparent render phase
 end
 --]==]
 

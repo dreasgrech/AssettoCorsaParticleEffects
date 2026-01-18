@@ -927,14 +927,6 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ac.log(string_format('Particle Effects window size: (%.2f, %.2f)', winSize.x, winSize.y))
     --]===]
     -- ac.log(FireworksManager.getFireworksValue(fireworksInstance.fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity))
-    
-    --[===[
-    -- Andreas: testing penalty setting issue problem reported in discord
-    if ui.button('penalty') then
-        physics.setCarPenalty(ac.PenaltyType.SlowDown, 5)
-    end
-    ac.log(ac.getCar(0).currentPenaltyType .. ' '.. ac.getCar(0).currentPenaltyParameter)
-    --]===]
 end
 
 --[==[

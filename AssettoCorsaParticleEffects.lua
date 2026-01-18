@@ -77,6 +77,9 @@ ParticleEffectsExtConfigFileHandler = require("ParticleEffectsExtConfigFileHandl
 LuaParticleEffectsCodeGenerator = require("LuaParticleEffectsCodeGenerator")
 FireworksManager = require("FireworksManager")
 
+
+require('lib/raFlame/raFlame')
+
 -- local bindings
 local bit_bor = bit.bor
 local ac_setClipboardText = ac.setClipboardText
@@ -924,6 +927,14 @@ function script.MANIFEST__FUNCTION_MAIN(dt)
     ac.log(string_format('Particle Effects window size: (%.2f, %.2f)', winSize.x, winSize.y))
     --]===]
     -- ac.log(FireworksManager.getFireworksValue(fireworksInstance.fireworksIndex, FireworksManager.FIREWORKS_VALUES.Intensity))
+    
+    --[===[
+    -- Andreas: testing penalty setting issue problem reported in discord
+    if ui.button('penalty') then
+        physics.setCarPenalty(ac.PenaltyType.SlowDown, 5)
+    end
+    ac.log(ac.getCar(0).currentPenaltyType .. ' '.. ac.getCar(0).currentPenaltyParameter)
+    --]===]
 end
 
 --[==[
@@ -932,6 +943,14 @@ function script.MANIFEST__FUNCTION_FIREWORKS()
 
     -- ac.log('fireworks window')
 end
+--]==]
+
+local japaneseFlame = raFlame.placeFlame(flameInstance.position, vec2(1, 2), {
+  power = 0.5,
+  style = 0.0,
+  speed = 1.0
+})
+--[==[
 --]==]
 
 ---
@@ -949,7 +968,18 @@ function script.MANIFEST__UPDATE(dt)
     if smokeInstance.enabled then
         smoke:emit(smokeInstance.getFinalPosition(), smokeInstance.velocity, smokeInstance.amount)
     end
+
+    japaneseFlame:setPosition(flameInstance.position)
+    raFlame.updateFlames(dt)
+--[==[
+--]==]
 end
+
+--[==[
+function script.MANIFEST__TRANSPARENT(dt)
+    raFlame.updateFlames(dt)
+end
+--]==]
 
 -- If this is the first time the app is running, open the main window
 if not storage.appRanFirstTime then

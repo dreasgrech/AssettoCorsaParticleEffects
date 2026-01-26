@@ -40,6 +40,9 @@ CSPCompatibilityManager.addFunction(function() return ui.setMouseCursor end, "ui
 CSPCompatibilityManager.addFunction(function() return ui.styleColor end, "ui.styleColor")
 CSPCompatibilityManager.addFunction(function() return ui.StyleColor end, "ui.StyleColor")
 
+-- CSPCompatibilityManager.addSimStateFunction(function(sim) return sim.trackLengthM end, "ac.getSim().trackLengthM")
+-- CSPCompatibilityManager.addSimStateFunction(function(sim) return sim.raceSessionType end, "ac.getSim().trackLengthM")
+
 Constants = require("Constants")
 local everythingOK = CSPCompatibilityManager.checkAndAlert(Constants.APP_NAME, Constants.APP_VERSION)
 if not everythingOK then

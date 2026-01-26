@@ -48,11 +48,24 @@ end
 local usedElements = {}
 
 ---Add a function to be checked for existence in Custom Shaders Patch (CSP)
----@param fn function
----@param name string
+---@param fn function @The function that retrieves the CSP element to be checked
+---@param name string @The name of the CSP element (for logging purposes)
 CSPCompatibilityManager.addFunction = function(fn, name)
     local tableForUsedElement = getTableForUsedElement(fn, name)
     table.insert(usedElements, tableForUsedElement)
+end
+
+---@diagnostic disable-next-line: deprecated -- ac.getSimState is deprecated but we need to check for it here for backwards compatibility
+local simStateFn = ac.getSim or ac.getSimState
+local simStateFnAvailable, ac_sim = pcall(function() return simStateFn() end)
+
+---Add a function that takes ac.getSim() as a parameter to be checked for existence in Custom Shaders Patch (CSP)
+---@param fn fun(sim: ac.StateSim): any @The function that takes ac.getSim() as a parameter and retrieves the CSP element to be checked
+---@param name string @The name of the CSP element (for logging purposes)
+CSPCompatibilityManager.addSimStateFunction = function(fn, name)
+    CSPCompatibilityManager.addFunction(function()
+        return fn(ac_sim)
+    end, name)
 end
 
 local checkForMissingCSPElements = function()
@@ -60,25 +73,12 @@ local checkForMissingCSPElements = function()
     local ac = ac
     local ui = ui
 
-    -- Make sure we have access to the ac.getSim or ac.getSimState functions!
-    ---@type table<TableForUsedElement>
-    local usedAcStateSimElements
-    ---@diagnostic disable-next-line: deprecated -- ac.getSimState is deprecated but we need to check for it here for backwards compatibility
-    local simStateFn = ac.getSim or ac.getSimState
-    local simStateFnAvailable, sim = pcall(function() return simStateFn() end)
-    if simStateFnAvailable then
-        usedAcStateSimElements = {
-            getTableForUsedElement(function() return sim.trackLengthM end, "ac.getSim().trackLengthM"),
-            getTableForUsedElement(function() return sim.raceSessionType end, "ac.getSim().raceSessionType"),
-        }
-    end
-
     -- For testing: add some non-existant functions to see if the missing check works
     if ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING then
         table.insert(usedElements, getTableForUsedElement(function() return ac.nonExistantFunction end, "ac.nonExistantFunction"))
         table.insert(usedElements, getTableForUsedElement(function() return ui.nonExistantFunction end, "ui.nonExistantFunction"))
         if simStateFnAvailable then
-            table.insert(usedElements, getTableForUsedElement(function() return sim.nonExistantFunction end, "ac.getSim().nonExistantFunction"))
+            table.insert(usedElements, getTableForUsedElement(function() return ac_sim.nonExistantFunction end, "ac.getSim().nonExistantFunction"))
         end
     end
 
@@ -110,12 +110,8 @@ local checkForMissingCSPElements = function()
     ---@type table<string>
     local missingElementsNames = {}
 
+    -- Check for the missing elements that were added by the user
     checkMissingElements(usedElements, missingElementsNames)
-
-    -- Check for missing elements in ac.getSim()
-    if simStateFnAvailable then
-        checkMissingElements(usedAcStateSimElements, missingElementsNames)
-    end
 
     return missingElementsNames
 end

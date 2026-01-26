@@ -24,7 +24,7 @@ end
 
 ---Returns the current version of Custom Shaders Patch
 ---@return string
-CSPCompatibilityManager.getCSPVersion = function()
+local getCSPVersion = function()
     local getPatchVersionFn = ac.getPatchVersion
     if not getPatchVersionFn then
         return "Unknown"
@@ -36,7 +36,7 @@ end
 
 --- Checks for missing CSP elements (functions, fields, enums, etc...) used in the app
 --- @return table<string> @List of missing element names
-CSPCompatibilityManager.checkForMissingCSPElements = function()
+local checkForMissingCSPElements = function()
     -- bindings (need to be in here for this class since we need to check for their existence)
     local ac = ac
     local ui = ui
@@ -176,7 +176,7 @@ CSPCompatibilityManager.checkForMissingCSPElements = function()
     return missingElementsNames
 end
 
-CSPCompatibilityManager.showMissingCSPElementsErrorModalDialog = function(appName, message)
+local showMissingCSPElementsErrorModalDialog = function(appName, message)
   local neededFunctionsForModalDialogAvailable =
     ui.modalDialog ~= nil or
     ui.textWrapped ~= nil or
@@ -194,7 +194,7 @@ CSPCompatibilityManager.showMissingCSPElementsErrorModalDialog = function(appNam
     ui.textColored(message, rgbm(1, 0, 0, 1))
     ui.newLine()
     if ui.modernButton('Copy', vec2(110, 40)) then
-      ac.setClipboardText(message) 
+      ac.setClipboardText(message)
     end
     ui.sameLine()
     if ui.modernButton('Close', vec2(120, 40)) then
@@ -206,11 +206,11 @@ CSPCompatibilityManager.showMissingCSPElementsErrorModalDialog = function(appNam
 end
 
 CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)
-    local cspVersion = CSPCompatibilityManager.getCSPVersion()
+    local cspVersion = getCSPVersion()
     ac.log(string.format("[CSPCompatibilityManager] Checking %s v%s.  Custom Shaders Patch: %s", appName, appVersion, cspVersion))
 
     -- Check if any CSP elements used by the app are missing
-    local missingCSPElements = CSPCompatibilityManager.checkForMissingCSPElements()
+    local missingCSPElements = checkForMissingCSPElements()
     local anyMissingCSPElements = (#missingCSPElements > 0)
     local missingCSPElementsErrorMessage
 
@@ -230,8 +230,7 @@ CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)
         ac.error(missingCSPElementsErrorMessage)
 
         -- Show the error modal dialog
-        -- showMissingCSPElementsErrorModalDialog(missingCSPElementsErrorMessage)
-        CSPCompatibilityManager.showMissingCSPElementsErrorModalDialog(appName, missingCSPElementsErrorMessage)
+        showMissingCSPElementsErrorModalDialog(appName, missingCSPElementsErrorMessage)
     end
 
     return not anyMissingCSPElements

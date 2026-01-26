@@ -8,10 +8,6 @@ local CSPCompatibilityManager = {}
 ---@field elementFn function
 ---@field name string
 
-local LOG_MISSING_ELEMENTS_WHILE_CHECKING = false
-local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = false
---local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = true
-
 -- capture ac.getSim() here
 ---@diagnostic disable-next-line: deprecated -- ac.getSimState is deprecated but we need to check for it here for backwards compatibility
 local simStateFn = ac.getSim or ac.getSimState
@@ -48,7 +44,7 @@ end
 ---@return table<string> @A list of names of missing CSP elements
 local checkForMissingCSPElements = function()
     -- For testing: add some non-existant functions to see if the missing check works
-    if ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING then
+    if CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing then
         CSPCompatibilityManager.addFunction(function() return ac.nonExistantFunction end, "ac.nonExistantFunction")
         CSPCompatibilityManager.addFunction(function() return ui.nonExistantFunction end, "ui.nonExistantFunction")
         if simStateFnAvailable then
@@ -76,7 +72,7 @@ local checkForMissingCSPElements = function()
         then
             -- add the missing element name metadata to the list of missing elements
             table.insert(missingElementsNames, usedElement.name)
-            if LOG_MISSING_ELEMENTS_WHILE_CHECKING then
+            if CSPCompatibilityManager.LogMissingElementsWhileChecking then
                 ac.log(string.format("[CSPCompatibilityManager] function '%s' is not available (nil)", usedElement.name))
             end
         end
@@ -86,33 +82,58 @@ local checkForMissingCSPElements = function()
 end
 
 local showMissingCSPElementsErrorModalDialog = function(appName, message)
-  local neededFunctionsForModalDialogAvailable =
-    ui.modalDialog ~= nil or
-    ui.textWrapped ~= nil or
-    ui.newLine ~= nil or
-    ui.button ~= nil or
-    ac.setClipboardText ~= nil or
-    ui.sameLine ~= nil
-
+    local neededFunctionsForModalDialogAvailable = ui.modalDialog ~= nil
     if not neededFunctionsForModalDialogAvailable then
       ac.error(string.format("Cannot show error dialog because some required CSP elements are missing.\nError text: %s", message))
       return
     end
 
-  ui.modalDialog(string.format('[Error] Missing CSP elements needed to run the %s app', appName), function()
-    ui.textColored(message, rgbm(1, 0, 0, 1))
-    ui.newLine()
-    if ui.modernButton('Copy', vec2(110, 40)) then
-      ac.setClipboardText(message)
-    end
-    ui.sameLine()
-    if ui.modernButton('Close', vec2(120, 40)) then
-      return true
-    end
+    ui.modalDialog(string.format('[Error] Missing CSP elements needed to run the %s app', appName), function()
+        ui.textColored(message, CSPCompatibilityManager.ErrorModalDialogTextColor)
+        if ui.newLine then ui.newLine() end
 
-    return false
-  end, true)
+        -- show the buttons
+        if ui.button then
+            if CSPCompatibilityManager.ErrorModalDialogShowCopyErrorToClipboardButton and ac.setClipboardText ~= nil then
+                -- if ui.modernButton('Copy', vec2(110, 40)) then
+                if ui.button('Copy', vec2(110, 40)) then
+                    ac.setClipboardText(message)
+                end
+
+                if ui.sameLine then ui.sameLine() end
+            end
+
+            -- if ui.modernButton('Close', vec2(120, 40)) then
+            if ui.button('Close', vec2(120, 40)) then
+                return true
+            end
+        end
+
+        return false
+    end, CSPCompatibilityManager.ErrorModalDialogAutoClose, CSPCompatibilityManager.OnErrorModalDialogClosed)
 end
+
+---If set to true, missing CSP elements will be logged to the CSP log as they are detected while checking
+CSPCompatibilityManager.LogMissingElementsWhileChecking = false
+
+---If set to true, some non-existant functions will be added to the list of functions to be checked for existence in CSP (for testing purposes)
+CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing = false
+
+---If set to true, an error modal dialog will be shown when missing CSP elements are detected
+CSPCompatibilityManager.ShowErrorModalDialog = true
+
+---The color used for the error modal dialog text
+CSPCompatibilityManager.ErrorModalDialogTextColor = rgbm(1, 0, 0, 1)
+
+---If set to true, the error modal dialog will include a "Copy" button
+CSPCompatibilityManager.ErrorModalDialogShowCopyErrorToClipboardButton = true
+
+---If set to true, the error modal dialog will automatically close when the Escape key is pressed or when clicking outside the dialog
+CSPCompatibilityManager.ErrorModalDialogAutoClose = true
+
+---A function that is called when the error modal dialog is closed
+---@type function|nil
+CSPCompatibilityManager.OnErrorModalDialogClosed = nil
 
 ---Add a function to be checked for existence in Custom Shaders Patch (CSP)
 ---@param fn function @The function that retrieves the CSP element to be checked
@@ -148,7 +169,7 @@ CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)
         for _, elementName in ipairs(missingCSPElements) do
             missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. " - " .. elementName .. "\n"
         end
-        missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\nSee the CSP log in \"\\Documents\\Assetto Corsa\\logs\\custom_shaders_patch.log\" for more details."
+        missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\nSee the CSP log in \"\\Documents\\Assetto Corsa\\logs\\custom_shaders_patch.log\" (on Windows) for more details."
         missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\n\nTo fix the issue, please make sure you're on the latest version of Custom Shaders Patch (https://www.patreon.com/c/x4fab/posts)"
         missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. string.format("\n\nYour CSP version is %s", cspVersion)
 
@@ -156,10 +177,21 @@ CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)
         ac.error(missingCSPElementsErrorMessage)
 
         -- Show the error modal dialog
-        showMissingCSPElementsErrorModalDialog(appName, missingCSPElementsErrorMessage)
+        if CSPCompatibilityManager.ShowErrorModalDialog then
+            showMissingCSPElementsErrorModalDialog(appName, missingCSPElementsErrorMessage)
+        end
     end
 
     return not anyMissingCSPElements
+end
+
+CSPCompatibilityManager.freeMemory = function()
+    table.clear(usedElements)
+
+    --[==[
+    ---@diagnostic disable-next-line: assign-type-mismatch -- to avoid warning about assigning nil to the table
+    usedElements = nil
+    --]==]
 end
 
 return CSPCompatibilityManager

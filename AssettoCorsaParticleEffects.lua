@@ -1,5 +1,12 @@
 CSPCompatibilityManager = require("lib.CSPCompatibilityManager")
 
+CSPCompatibilityManager.LogMissingElementsWhileChecking = false
+CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing = true
+--CSPCompatibilityManager.ShowErrorModalDialog = false 
+--CSPCompatibilityManager.ErrorModalDialogTextColor = rgbm(1, 0.5, 1, 1)
+CSPCompatibilityManager.ErrorModalDialogShowCopyErrorToClipboardButton = true
+-- CSPCompatibilityManager.OnErrorModalDialogClosed = function() ac.log("[CSPCompatibilityManager] The missing CSP elements error modal dialog was closed.") end
+
 -- CSPCompatibilityManager.addFunction(function() return zobbi.log end, "zobbi.log")
 
 CSPCompatibilityManager.addFunction(function() return ac.log end, "ac.log")
@@ -45,6 +52,7 @@ CSPCompatibilityManager.addFunction(function() return ui.StyleColor end, "ui.Sty
 
 Constants = require("Constants")
 local everythingOK = CSPCompatibilityManager.checkAndAlert(Constants.APP_NAME, Constants.APP_VERSION)
+--CSPCompatibilityManager.clearMemory()
 if not everythingOK then
     ac.error(string.format("%s v%s is missing required Custom Shaders Patch elements and will not run as expected.", Constants.APP_NAME, Constants.APP_VERSION))
     --return false

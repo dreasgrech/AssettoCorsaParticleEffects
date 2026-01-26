@@ -4,13 +4,18 @@
 --- Author: https://github.com/dreasgrech
 local CSPCompatibilityManager = {}
 
+---@class TableForUsedElement
+---@field elementFn function
+---@field name string
+
 local LOG_MISSING_ELEMENTS_WHILE_CHECKING = false
 local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = false
 --local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = true
 
----@class TableForUsedElement
----@field elementFn function
----@field name string
+-- capture ac.getSim() here
+---@diagnostic disable-next-line: deprecated -- ac.getSimState is deprecated but we need to check for it here for backwards compatibility
+local simStateFn = ac.getSim or ac.getSimState
+local simStateFnAvailable, ac_sim = pcall(function() return simStateFn() end)
 
 --- Creates a table for metadata of a used CSP element
 ---@param elementFn function
@@ -35,38 +40,7 @@ local getCSPVersion = function()
     return string.format("v%s", versionStr)
 end
 
---[===[
-CSPCompatibilityManager.addFunctions = function(tableName, addFunction)
-    -- resolve the global table
-    local globalTable = _G[tableName]
-    ac.log(globalTable)
-
-    addFunction(globalTable)
-end
---]===]
-
 local usedElements = {}
-
----Add a function to be checked for existence in Custom Shaders Patch (CSP)
----@param fn function @The function that retrieves the CSP element to be checked
----@param name string @The name of the CSP element (for logging purposes)
-CSPCompatibilityManager.addFunction = function(fn, name)
-    local tableForUsedElement = getTableForUsedElement(fn, name)
-    table.insert(usedElements, tableForUsedElement)
-end
-
----@diagnostic disable-next-line: deprecated -- ac.getSimState is deprecated but we need to check for it here for backwards compatibility
-local simStateFn = ac.getSim or ac.getSimState
-local simStateFnAvailable, ac_sim = pcall(function() return simStateFn() end)
-
----Add a function that takes ac.getSim() as a parameter to be checked for existence in Custom Shaders Patch (CSP)
----@param fn fun(sim: ac.StateSim): any @The function that takes ac.getSim() as a parameter and retrieves the CSP element to be checked
----@param name string @The name of the CSP element (for logging purposes)
-CSPCompatibilityManager.addSimStateFunction = function(fn, name)
-    CSPCompatibilityManager.addFunction(function()
-        return fn(ac_sim)
-    end, name)
-end
 
 local checkForMissingCSPElements = function()
     -- bindings (need to be in here for this class since we need to check for their existence)
@@ -143,6 +117,23 @@ local showMissingCSPElementsErrorModalDialog = function(appName, message)
 
     return false
   end, true)
+end
+
+---Add a function to be checked for existence in Custom Shaders Patch (CSP)
+---@param fn function @The function that retrieves the CSP element to be checked
+---@param name string @The name of the CSP element (for logging purposes)
+CSPCompatibilityManager.addFunction = function(fn, name)
+    local tableForUsedElement = getTableForUsedElement(fn, name)
+    table.insert(usedElements, tableForUsedElement)
+end
+
+---Add a function that takes ac.getSim() as a parameter to be checked for existence in Custom Shaders Patch (CSP)
+---@param fn fun(sim: ac.StateSim): any @The function that takes ac.getSim() as a parameter and retrieves the CSP element to be checked
+---@param name string @The name of the CSP element (for logging purposes)
+CSPCompatibilityManager.addSimStateFunction = function(fn, name)
+    CSPCompatibilityManager.addFunction(function()
+        return fn(ac_sim)
+    end, name)
 end
 
 CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)

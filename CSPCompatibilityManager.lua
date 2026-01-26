@@ -176,4 +176,65 @@ CSPCompatibilityManager.checkForMissingCSPElements = function()
     return missingElementsNames
 end
 
+CSPCompatibilityManager.showMissingCSPElementsErrorModalDialog = function(appName, message)
+  local neededFunctionsForModalDialogAvailable =
+    ui.modalDialog ~= nil or
+    ui.textWrapped ~= nil or
+    ui.newLine ~= nil or
+    ui.button ~= nil or
+    ac.setClipboardText ~= nil or
+    ui.sameLine ~= nil
+
+    if not neededFunctionsForModalDialogAvailable then
+      ac.error(string.format("Cannot show error dialog because some required CSP elements are missing.\nError text: %s", message))
+      return
+    end
+
+  ui.modalDialog(string.format('[Error] Missing CSP elements needed to run the %s app', appName), function()
+    ui.textColored(message, rgbm(1, 0, 0, 1))
+    ui.newLine()
+    if ui.modernButton('Copy', vec2(110, 40)) then
+      ac.setClipboardText(message) 
+    end
+    ui.sameLine()
+    if ui.modernButton('Close', vec2(120, 40)) then
+      return true
+    end
+
+    return false
+  end, true)
+end
+
+CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)
+    local cspVersion = CSPCompatibilityManager.getCSPVersion()
+    ac.log(string.format("[CSPCompatibilityManager] Checking %s v%s.  Custom Shaders Patch: %s", appName, appVersion, cspVersion))
+
+    -- Check if any CSP elements used by the app are missing
+    local missingCSPElements = CSPCompatibilityManager.checkForMissingCSPElements()
+    local anyMissingCSPElements = (#missingCSPElements > 0)
+    local missingCSPElementsErrorMessage
+
+    -- Show an error modal dialog if any CSP elements are missing
+    if anyMissingCSPElements then
+        -- Build the CSP missing elements error message
+        missingCSPElementsErrorMessage = string.format("%s may not run as expected because some required Custom Shaders Patch elements are missing.", appName)
+        missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\n\nThe following CSP elements are needed by the app:\n"
+        for _, elementName in ipairs(missingCSPElements) do
+            missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. " - " .. elementName .. "\n"
+        end
+        missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\nSee the CSP log in \"\\Documents\\Assetto Corsa\\logs\\custom_shaders_patch.log\" for more details."
+        missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. "\n\nTo fix the issue, please make sure you're on the latest version of Custom Shaders Patch (https://www.patreon.com/c/x4fab/posts)"
+        missingCSPElementsErrorMessage = missingCSPElementsErrorMessage .. string.format("\n\nYour CSP version is %s", cspVersion)
+
+        -- Log the error to the CSP log as well
+        ac.error(missingCSPElementsErrorMessage)
+
+        -- Show the error modal dialog
+        -- showMissingCSPElementsErrorModalDialog(missingCSPElementsErrorMessage)
+        CSPCompatibilityManager.showMissingCSPElementsErrorModalDialog(appName, missingCSPElementsErrorMessage)
+    end
+
+    return not anyMissingCSPElements
+end
+
 return CSPCompatibilityManager

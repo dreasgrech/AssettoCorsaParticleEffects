@@ -17,6 +17,10 @@ local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = false
 local simStateFn = ac.getSim or ac.getSimState
 local simStateFnAvailable, ac_sim = pcall(function() return simStateFn() end)
 
+--- The collection used to store metadata of CSP elements set by the caller
+---@type table<TableForUsedElement>
+local usedElements = {}
+
 --- Creates a table for metadata of a used CSP element
 ---@param elementFn function
 ---@param elementName string
@@ -24,7 +28,7 @@ local simStateFnAvailable, ac_sim = pcall(function() return simStateFn() end)
 local getTableForUsedElement = function(elementFn, elementName)
     return {
         name = elementName,
-        elementFn = elementFn,
+        elementFn = elementFn
     }
 end
 
@@ -40,52 +44,43 @@ local getCSPVersion = function()
     return string.format("v%s", versionStr)
 end
 
-local usedElements = {}
-
+---Goes through the caller-supplied list of functions and determine which functions don't exist in the current CSP version
+---@return table<string> @A list of names of missing CSP elements
 local checkForMissingCSPElements = function()
-    -- bindings (need to be in here for this class since we need to check for their existence)
-    local ac = ac
-    local ui = ui
-
     -- For testing: add some non-existant functions to see if the missing check works
     if ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING then
-        table.insert(usedElements, getTableForUsedElement(function() return ac.nonExistantFunction end, "ac.nonExistantFunction"))
-        table.insert(usedElements, getTableForUsedElement(function() return ui.nonExistantFunction end, "ui.nonExistantFunction"))
+        CSPCompatibilityManager.addFunction(function() return ac.nonExistantFunction end, "ac.nonExistantFunction")
+        CSPCompatibilityManager.addFunction(function() return ui.nonExistantFunction end, "ui.nonExistantFunction")
         if simStateFnAvailable then
-            table.insert(usedElements, getTableForUsedElement(function() return ac_sim.nonExistantFunction end, "ac.getSim().nonExistantFunction"))
+            ---@diagnostic disable-next-line: undefined-field -- Doing this here to disable to warning on the following non-existant function
+            CSPCompatibilityManager.addSimStateFunction(function(sim) return sim.nonExistantFunction end, "ac.getSim().nonExistantFunction")
         end
     end
 
-    ---Goes through the list of used elements and checks if any are not available
-    ---@param elements table<TableForUsedElement>
-    ---@param missingElementsNames table<string>
-    local checkMissingElements = function(elements, missingElementsNames)
-        for _, usedElement in ipairs(elements) do
-            local elementFn = usedElement.elementFn
-            -- using pcall here to catch any errors that may occur when calling the function that retrieves the element, which is an indication that the element is missing
-            local success, result = pcall(function()
-                local elementFnValue = elementFn()
-                return elementFnValue ~= nil
-            end)
-
-            if
-                not success or  -- if success is false, there was an error calling the function, so the element is missing
-                result == false -- if result is false, the element is nil, so it's missing
-            then
-                -- add the missing element name metadata to the list of missing elements
-                table.insert(missingElementsNames, usedElement.name)
-                if LOG_MISSING_ELEMENTS_WHILE_CHECKING then
-                    ac.log(string.format("[CSPCompatibilityManager] function '%s' is not available (nil)", usedElement.name))
-                end
-            end
-        end
-    end
-
+    -- Check for the missing elements that were added by the user
     ---@type table<string>
     local missingElementsNames = {}
 
-    -- Check for the missing elements that were added by the user
-    checkMissingElements(usedElements, missingElementsNames)
+    for _, usedElement in ipairs(usedElements) do
+        local elementFn = usedElement.elementFn
+
+        -- using pcall here to catch any errors that may occur when calling the function that retrieves the element, which is an indication that the element is missing
+        local success, result = pcall(function()
+            local elementFnValue = elementFn()
+            return elementFnValue ~= nil
+        end)
+
+        if
+            not success or  -- if success is false, there was an error calling the function, so the element is missing
+            result == false -- if result is false, the element is nil, so it's missing
+        then
+            -- add the missing element name metadata to the list of missing elements
+            table.insert(missingElementsNames, usedElement.name)
+            if LOG_MISSING_ELEMENTS_WHILE_CHECKING then
+                ac.log(string.format("[CSPCompatibilityManager] function '%s' is not available (nil)", usedElement.name))
+            end
+        end
+    end
 
     return missingElementsNames
 end

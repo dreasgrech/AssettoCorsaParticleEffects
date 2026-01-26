@@ -6,6 +6,7 @@ local CSPCompatibilityManager = {}
 
 local LOG_MISSING_ELEMENTS_WHILE_CHECKING = false
 local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = false
+--local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = true
 
 ---@class TableForUsedElement
 ---@field elementFn function
@@ -15,10 +16,12 @@ local ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING = false
 ---@param elementFn function
 ---@param elementName string
 ---@return TableForUsedElement
+-- local getTableForUsedElement = function(elementFn, elementName, namespace)
 local getTableForUsedElement = function(elementFn, elementName)
     return {
         name = elementName,
-        elementFn = elementFn
+        elementFn = elementFn,
+        -- namespace = namespace,
     }
 end
 
@@ -34,8 +37,23 @@ local getCSPVersion = function()
     return string.format("v%s", versionStr)
 end
 
---- Checks for missing CSP elements (functions, fields, enums, etc...) used in the app
---- @return table<string> @List of missing element names
+--[===[
+CSPCompatibilityManager.addFunctions = function(tableName, addFunction)
+    -- resolve the global table
+    local globalTable = _G[tableName]
+    ac.log(globalTable)
+
+    addFunction(globalTable)
+end
+--]===]
+
+local usedElements = {}
+
+CSPCompatibilityManager.addFunction = function(fn, name)
+    local tableForUsedElement = getTableForUsedElement(fn, name)
+    table.insert(usedElements, tableForUsedElement)
+end
+
 local checkForMissingCSPElements = function()
     -- bindings (need to be in here for this class since we need to check for their existence)
     local ac = ac
@@ -135,8 +153,9 @@ local checkForMissingCSPElements = function()
     ---Goes through the list of used elements and checks if any are not available
     ---@param elements table<TableForUsedElement>
     ---@param missingElementsNames table<string>
-    ---@param namespace string
-    local checkMissingElements = function(elements, missingElementsNames, namespace)
+    -- ---@param namespace string
+    -- local checkMissingElements = function(elements, missingElementsNames, namespace)
+    local checkMissingElements = function(elements, missingElementsNames)
         for _, usedElement in ipairs(elements) do
             local elementFn = usedElement.elementFn
             -- using pcall here to catch any errors that may occur when calling the function that retrieves the element, which is an indication that the element is missing
@@ -151,7 +170,11 @@ local checkForMissingCSPElements = function()
             then
                 -- add the missing element name metadata to the list of missing elements
                 table.insert(missingElementsNames, usedElement.name)
-                if LOG_MISSING_ELEMENTS_WHILE_CHECKING then ac.log(string.format("[CSPCompatibilityManager] %s function '%s' is not available (nil)", namespace, usedElement.name)) end
+                if LOG_MISSING_ELEMENTS_WHILE_CHECKING then
+                    -- namespace = usedElement.namespace or namespace
+                    -- ac.log(string.format("[CSPCompatibilityManager] %s function '%s' is not available (nil)", namespace, usedElement.name))
+                    ac.log(string.format("[CSPCompatibilityManager] function '%s' is not available (nil)", usedElement.name))
+                end
             end
         end
     end
@@ -159,18 +182,25 @@ local checkForMissingCSPElements = function()
     ---@type table<string>
     local missingElementsNames = {}
 
+    -------------
+    checkMissingElements(usedElements, missingElementsNames)
+    -------------
+
     -- Check for missing elements in ac
-    checkMissingElements(usedACElements, missingElementsNames, "ac")
+    -- checkMissingElements(usedACElements, missingElementsNames, "ac")
+    checkMissingElements(usedACElements, missingElementsNames)
 
     -- Check for missing elements in ui
-    checkMissingElements(usedUIElements, missingElementsNames, "ui")
+    -- checkMissingElements(usedUIElements, missingElementsNames, "ui")
+    checkMissingElements(usedUIElements, missingElementsNames)
 
     -- -- Check for missing elements in physics
     -- checkMissingElements(usedPhysicsElements, missingElementsNames, "physics")
 
     -- Check for missing elements in ac.getSim()
     if simStateFnAvailable then
-        checkMissingElements(usedAcStateSimElements, missingElementsNames, "ac.getSim()")
+        -- checkMissingElements(usedAcStateSimElements, missingElementsNames, "ac.getSim()")
+        checkMissingElements(usedAcStateSimElements, missingElementsNames)
     end
 
     return missingElementsNames
@@ -212,6 +242,8 @@ CSPCompatibilityManager.checkAndAlert = function(appName, appVersion)
     -- Check if any CSP elements used by the app are missing
     local missingCSPElements = checkForMissingCSPElements()
     local anyMissingCSPElements = (#missingCSPElements > 0)
+    -- ac.log(string.format("[CSPCompatibilityManager] Missing CSP elements: %s", table.concat(missingCSPElements, ", ")))
+    -- ac.log(string.format("[CSPCompatibilityManager] anyMissingCSPElements: %s", tostring(anyMissingCSPElements)))
     local missingCSPElementsErrorMessage
 
     -- Show an error modal dialog if any CSP elements are missing

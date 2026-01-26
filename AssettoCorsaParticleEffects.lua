@@ -1,11 +1,24 @@
 CSPCompatibilityManager = require("CSPCompatibilityManager")
 
+-- CSPCompatibilityManager.addFunction(function() return zobbi.log end, "zobbi.log")
+
 Constants = require("Constants")
 local everythingOK = CSPCompatibilityManager.checkAndAlert(Constants.APP_NAME, Constants.APP_VERSION)
 if not everythingOK then
     ac.error(string.format("%s v%s is missing required Custom Shaders Patch elements and will not run as expected.", Constants.APP_NAME, Constants.APP_VERSION))
     --return false
 end
+
+--[===[
+CSPCompatibilityManager.addFunctions("physics", function(csp_physics)
+    -- cast csp_physics to physics
+    ---@cast csp_physics ac
+    
+    csp_physics.
+
+end))
+--]===]
+-- CSPCompatibilityManager.addFunction(function() return ac.log end, "ac", "ac.log")
 
 ---@enum ParticleEffectsType
 ParticleEffectsType = {

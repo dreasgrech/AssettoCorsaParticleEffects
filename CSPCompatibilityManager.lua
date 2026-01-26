@@ -61,48 +61,48 @@ local checkForMissingCSPElements = function()
     -- local physics = physics
 
     ---@type table<TableForUsedElement>
-    local usedACElements = {
-        getTableForUsedElement(function() return ac.log end, "ac.log"),
-        getTableForUsedElement(function() return ac.warn end, "ac.warn"),
-        getTableForUsedElement(function() return ac.error end, "ac.error"),
-        getTableForUsedElement(function() return ac.getSim end, "ac.getSim"),
-        getTableForUsedElement(function() return ac.storage end, "ac.storage"),
-        getTableForUsedElement(function() return ac.setWindowOpen end, "ac.setWindowOpen"),
-    }
+    -- local usedACElements = {
+        -- getTableForUsedElement(function() return ac.log end, "ac.log"),
+        -- getTableForUsedElement(function() return ac.warn end, "ac.warn"),
+        -- getTableForUsedElement(function() return ac.error end, "ac.error"),
+        -- getTableForUsedElement(function() return ac.getSim end, "ac.getSim"),
+        -- getTableForUsedElement(function() return ac.storage end, "ac.storage"),
+        -- getTableForUsedElement(function() return ac.setWindowOpen end, "ac.setWindowOpen"),
+    -- }
 
-    ---@type table<TableForUsedElement>
-    local usedUIElements = {
-        getTableForUsedElement(function() return ui.button end, "ui.button"),
-        getTableForUsedElement(function() return ui.newLine end, "ui.newLine"),
-        getTableForUsedElement(function() return ui.text end, "ui.text"),
-        getTableForUsedElement(function() return ui.pushItemWidth end, "ui.pushItemWidth"),
-        getTableForUsedElement(function() return ui.popItemWidth end, "ui.popItemWidth"),
-        getTableForUsedElement(function() return ui.itemHovered end, "ui.itemHovered"),
-        getTableForUsedElement(function() return ui.setTooltip end, "ui.setTooltip"),
-        getTableForUsedElement(function() return ui.pushDisabled end, "ui.pushDisabled"),
-        getTableForUsedElement(function() return ui.popDisabled end, "ui.popDisabled"),
-        getTableForUsedElement(function() return ui.columns end, "ui.columns"),
-        getTableForUsedElement(function() return ui.ButtonFlags end, "ui.buttonFlags"),
-        getTableForUsedElement(function() return ui.pushStyleColor end, "ui.pushStyleColor"),
-        getTableForUsedElement(function() return ui.popStyleColor end, "ui.popStyleColor"),
-        getTableForUsedElement(function() return ui.textColored end, "ui.textColored"),
-        getTableForUsedElement(function() return ui.setColumnWidth end, "ui.setColumnWidth"),
-        getTableForUsedElement(function() return ui.separator end, "ui.separator"),
-        getTableForUsedElement(function() return ui.nextColumn end, "ui.nextColumn"),
-        getTableForUsedElement(function() return ui.pushID end, "ui.pushID"),
-        getTableForUsedElement(function() return ui.popID end, "ui.popID"),
-        getTableForUsedElement(function() return ui.itemClicked end, "ui.itemClicked"),
-        getTableForUsedElement(function() return ui.sameLine end, "ui.sameLine"),
-        getTableForUsedElement(function() return ui.slider end, "ui.slider"),
-        getTableForUsedElement(function() return ui.dwriteText end, "ui.dwriteText"),
-        getTableForUsedElement(function() return ui.checkbox end, "ui.checkbox"),
-        getTableForUsedElement(function() return ui.MouseButton end, "ui.MouseButton"),
-        getTableForUsedElement(function() return ui.mouseClicked end, "ui.mouseClicked"),
-        getTableForUsedElement(function() return ui.alignTextToFramePadding end, "ui.alignTextToFramePadding"),
-        getTableForUsedElement(function() return ui.setMouseCursor end, "ui.setMouseCursor"),
-        getTableForUsedElement(function() return ui.styleColor end, "ui.styleColor"),
-        getTableForUsedElement(function() return ui.StyleColor end, "ui.StyleColor"),
-    }
+    -- ---@type table<TableForUsedElement>
+    -- local usedUIElements = {
+        -- getTableForUsedElement(function() return ui.button end, "ui.button"),
+        -- getTableForUsedElement(function() return ui.newLine end, "ui.newLine"),
+        -- getTableForUsedElement(function() return ui.text end, "ui.text"),
+        -- getTableForUsedElement(function() return ui.pushItemWidth end, "ui.pushItemWidth"),
+        -- getTableForUsedElement(function() return ui.popItemWidth end, "ui.popItemWidth"),
+        -- getTableForUsedElement(function() return ui.itemHovered end, "ui.itemHovered"),
+        -- getTableForUsedElement(function() return ui.setTooltip end, "ui.setTooltip"),
+        -- getTableForUsedElement(function() return ui.pushDisabled end, "ui.pushDisabled"),
+        -- getTableForUsedElement(function() return ui.popDisabled end, "ui.popDisabled"),
+        -- getTableForUsedElement(function() return ui.columns end, "ui.columns"),
+        -- getTableForUsedElement(function() return ui.ButtonFlags end, "ui.buttonFlags"),
+        -- getTableForUsedElement(function() return ui.pushStyleColor end, "ui.pushStyleColor"),
+        -- getTableForUsedElement(function() return ui.popStyleColor end, "ui.popStyleColor"),
+        -- getTableForUsedElement(function() return ui.textColored end, "ui.textColored"),
+        -- getTableForUsedElement(function() return ui.setColumnWidth end, "ui.setColumnWidth"),
+        -- getTableForUsedElement(function() return ui.separator end, "ui.separator"),
+        -- getTableForUsedElement(function() return ui.nextColumn end, "ui.nextColumn"),
+        -- getTableForUsedElement(function() return ui.pushID end, "ui.pushID"),
+        -- getTableForUsedElement(function() return ui.popID end, "ui.popID"),
+        -- getTableForUsedElement(function() return ui.itemClicked end, "ui.itemClicked"),
+        -- getTableForUsedElement(function() return ui.sameLine end, "ui.sameLine"),
+        -- getTableForUsedElement(function() return ui.slider end, "ui.slider"),
+        -- getTableForUsedElement(function() return ui.dwriteText end, "ui.dwriteText"),
+        -- getTableForUsedElement(function() return ui.checkbox end, "ui.checkbox"),
+        -- getTableForUsedElement(function() return ui.MouseButton end, "ui.MouseButton"),
+        -- getTableForUsedElement(function() return ui.mouseClicked end, "ui.mouseClicked"),
+        -- getTableForUsedElement(function() return ui.alignTextToFramePadding end, "ui.alignTextToFramePadding"),
+        -- getTableForUsedElement(function() return ui.setMouseCursor end, "ui.setMouseCursor"),
+        -- getTableForUsedElement(function() return ui.styleColor end, "ui.styleColor"),
+        -- getTableForUsedElement(function() return ui.StyleColor end, "ui.StyleColor"),
+    -- }
 
     -- ---@type table<TableForUsedElement>
     -- local usedPhysicsElements = {
@@ -142,11 +142,14 @@ local checkForMissingCSPElements = function()
 
     -- For testing: add some non-existant functions to see if the missing check works
     if ADD_NON_EXISTANT_FUNCTIONS_TO_TEST_MISSING then
-        table.insert(usedACElements, getTableForUsedElement(function() return ac.nonExistantFunction end, "ac.nonExistantFunction"))
-        table.insert(usedUIElements, getTableForUsedElement(function() return ui.nonExistantFunction end, "ui.nonExistantFunction"))
+        -- table.insert(usedACElements, getTableForUsedElement(function() return ac.nonExistantFunction end, "ac.nonExistantFunction"))
+        -- table.insert(usedUIElements, getTableForUsedElement(function() return ui.nonExistantFunction end, "ui.nonExistantFunction"))
+        table.insert(usedElements, getTableForUsedElement(function() return ac.nonExistantFunction end, "ac.nonExistantFunction"))
+        table.insert(usedElements, getTableForUsedElement(function() return ui.nonExistantFunction end, "ui.nonExistantFunction"))
         -- table.insert(usedPhysicsElements, getTableForUsedElement(function() return physics.nonExistantFunction end, "physics.nonExistantFunction"))
         if simStateFnAvailable then
-            table.insert(usedAcStateSimElements, getTableForUsedElement(function() return sim.nonExistantFunction end, "ac.getSim().nonExistantFunction"))
+            -- table.insert(usedAcStateSimElements, getTableForUsedElement(function() return sim.nonExistantFunction end, "ac.getSim().nonExistantFunction"))
+            table.insert(usedElements, getTableForUsedElement(function() return sim.nonExistantFunction end, "ac.getSim().nonExistantFunction"))
         end
     end
 
@@ -188,11 +191,11 @@ local checkForMissingCSPElements = function()
 
     -- Check for missing elements in ac
     -- checkMissingElements(usedACElements, missingElementsNames, "ac")
-    checkMissingElements(usedACElements, missingElementsNames)
+    -- checkMissingElements(usedACElements, missingElementsNames)
 
     -- Check for missing elements in ui
     -- checkMissingElements(usedUIElements, missingElementsNames, "ui")
-    checkMissingElements(usedUIElements, missingElementsNames)
+    -- checkMissingElements(usedUIElements, missingElementsNames)
 
     -- -- Check for missing elements in physics
     -- checkMissingElements(usedPhysicsElements, missingElementsNames, "physics")

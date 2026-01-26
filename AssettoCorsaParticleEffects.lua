@@ -1,4 +1,4 @@
-CSPCompatibilityManager = require("CSPCompatibilityManager")
+CSPCompatibilityManager = require("lib.CSPCompatibilityManager")
 
 -- CSPCompatibilityManager.addFunction(function() return zobbi.log end, "zobbi.log")
 

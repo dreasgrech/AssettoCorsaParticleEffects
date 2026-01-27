@@ -1,4 +1,4 @@
-CSPCompatibilityManager = require("lib.CSPCompatibilityManager")
+CSPCompatibilityManager = require("lib.AssettoCorsaCSPLuaCompatibilityManager.CSPCompatibilityManager")
 
 CSPCompatibilityManager.LogMissingElementsWhileChecking = false
 CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing = true
@@ -6,6 +6,7 @@ CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing = true
 --CSPCompatibilityManager.ErrorModalDialogTextColor = rgbm(1, 0.5, 1, 1)
 CSPCompatibilityManager.ErrorModalDialogShowCopyErrorToClipboardButton = true
 -- CSPCompatibilityManager.OnErrorModalDialogClosed = function() ac.log("[CSPCompatibilityManager] The missing CSP elements error modal dialog was closed.") end
+
 
 -- CSPCompatibilityManager.addFunction(function() return zobbi.log end, "zobbi.log")
 

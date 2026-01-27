@@ -1,7 +1,7 @@
 CSPCompatibilityManager = require("lib.AssettoCorsaCSPLuaCompatibilityManager.CSPCompatibilityManager")
 
 CSPCompatibilityManager.LogMissingElementsWhileChecking = false
-CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing = true
+CSPCompatibilityManager.AddNonExistantFunctionsToTestMissing = false
 --CSPCompatibilityManager.ShowErrorModalDialog = false 
 --CSPCompatibilityManager.ErrorModalDialogTextColor = rgbm(1, 0.5, 1, 1)
 CSPCompatibilityManager.ErrorModalDialogShowCopyErrorToClipboardButton = true

@@ -52,8 +52,8 @@ CSPCompatibilityManager.addFunction(function() return ui.StyleColor end, "ui.Sty
 -- CSPCompatibilityManager.addSimStateFunction(function(sim) return sim.raceSessionType end, "ac.getSim().trackLengthM")
 
 Constants = require("Constants")
-local everythingOK = CSPCompatibilityManager.checkAndAlert(Constants.APP_NAME, Constants.APP_VERSION)
---CSPCompatibilityManager.clearMemory()
+local everythingOK = CSPCompatibilityManager.checkForMissingElements(Constants.APP_NAME, Constants.APP_VERSION)
+CSPCompatibilityManager.freeMemory()
 if not everythingOK then
     ac.error(string.format("%s v%s is missing required Custom Shaders Patch elements and will not run as expected.", Constants.APP_NAME, Constants.APP_VERSION))
     --return false
